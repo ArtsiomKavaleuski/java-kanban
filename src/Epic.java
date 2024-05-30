@@ -7,10 +7,6 @@ public class Epic extends Task {
         super(taskName, taskDescription, taskId, TaskStatus.NEW);
     }
 
-    public void linkSubtask(int subTaskId) {
-        this.subTaskIds.add(subTaskId);
-    }
-
     public ArrayList<Integer> getSubTaskIds() {
         return subTaskIds;
     }
