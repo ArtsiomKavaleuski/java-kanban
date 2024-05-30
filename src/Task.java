@@ -6,15 +6,37 @@ public class Task {
     protected final int taskId;
     protected TaskStatus taskStatus;
 
-    public Task(String taskName, String taskDescription, int taskId) {
+    public Task(String taskName, String taskDescription, int taskId, TaskStatus taskStatus) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskId = taskId;
-        this.taskStatus = TaskStatus.NEW;
+        this.taskStatus = taskStatus;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public String getTaskDescription() {
+        return taskDescription;
     }
 
     public int getTaskId() {
         return taskId;
+    }
+
+    public TaskStatus getTaskStatus() {
+        return taskStatus;
+    }
+
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
+    public void checkStatus(TaskStatus taskStatus) {
+        if (taskStatus != TaskStatus.NEW || taskStatus != TaskStatus.IN_PROGRESS || taskStatus != TaskStatus.DONE) {
+            System.out.println("wrong status");
+        }
     }
 
 
