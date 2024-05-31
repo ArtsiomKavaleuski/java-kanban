@@ -49,7 +49,7 @@ public class Main {
         System.out.println("Статусы задач изменены на IN_PROGRESS и DONE, \n" +
                 "Статусы подзадач 1-го эпика изменены на IN_PROGRESS и DONE \n" +
                 "(ожидается изменение статуса 1-го эпика на IN_PROGRESS), \n" +
-                "Статус подзадачи 2-го эписка изменен на DONE \n" +
+                "Статус подзадачи 2-го эпика изменен на DONE \n" +
                 "(ожидается изменение статуса 2-го эпика на DONE)");
 
         print(tm);
@@ -64,7 +64,7 @@ public class Main {
         print(tm);
 
         tm.updateEpic(epic2.getTaskId(), new Epic("Обновлённый эпик 2",
-                "Обновленное описание эпика 2", epic2.getTaskId(), epic2.getSubTaskIds()));
+                "Обновленное описание эпика 2", epic2.getTaskId(), epic2.getSubTaskIdList()));
 
         System.out.println("");
         System.out.println("*".repeat(150));
