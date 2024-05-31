@@ -33,11 +33,6 @@ public class Task {
         this.taskStatus = taskStatus;
     }
 
-    public void checkStatus(TaskStatus taskStatus) {
-        if (taskStatus != TaskStatus.NEW || taskStatus != TaskStatus.IN_PROGRESS || taskStatus != TaskStatus.DONE) {
-            System.out.println("wrong status");
-        }
-    }
     @Override
     public String toString() {
         return "Task{taskName='" + taskName +
@@ -50,7 +45,8 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return taskId == task.taskId && Objects.equals(taskName, task.taskName) && Objects.equals(taskDescription, task.taskDescription) && taskStatus == task.taskStatus;
+        return taskId == task.taskId && Objects.equals(taskName, task.taskName) && Objects.equals(taskDescription,
+                task.taskDescription) && taskStatus == task.taskStatus;
     }
     @Override
     public int hashCode() {
