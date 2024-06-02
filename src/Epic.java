@@ -3,13 +3,13 @@ import java.util.ArrayList;
 public class Epic extends Task {
     private ArrayList<Integer> subTaskIdList = new ArrayList<>();
 
-    public Epic(String taskName, String taskDescription, int taskId) {
-        super(taskName, taskDescription, taskId, TaskStatus.NEW);
+    public Epic(String name, String description, int id) {
+        super(name, description, id, TaskStatus.NEW);
     }
 
-    public Epic(String taskName, String taskDescription, int taskId, ArrayList<Integer> subTaskIds) {
-        super(taskName, taskDescription, taskId, TaskStatus.NEW);
-        this.subTaskIdList = subTaskIds;
+    public Epic(String name, String description, int id, ArrayList<Integer> subTaskIdList) {
+        super(name, description, id, TaskStatus.NEW);
+        this.subTaskIdList = subTaskIdList;
     }
 
     public ArrayList<Integer> getSubTaskIdList() {
@@ -22,11 +22,11 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{epicName='" + super.taskName +
-                "', epicDescription='" + super.taskDescription +
-                "', epicId='" + super.taskId +
-                "', epicStatus='" + super.taskStatus +
-                "', subTaskIds=" + subTaskIdList +
+        return "Epic{name='" + super.name +
+                "', description='" + super.description +
+                "', id='" + super.id +
+                "', status='" + super.status +
+                "', subTaskIdList=" + subTaskIdList +
                 "}";
     }
 }
