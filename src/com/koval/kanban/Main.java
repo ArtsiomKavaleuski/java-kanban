@@ -34,7 +34,7 @@ public class Main {
         tm.addToSubtasks(subTask3);
 
         System.out.println("*".repeat(150));
-        System.out.println("Добавлены 2 задачи со статусами IN_PROGRESS и NEW, \n" +
+        System.out.println("Добавлены 2 задачи со статусами NEW и IN_PROGRESS, \n" +
                 "Добавлен 1 эпик с 2 подзадачами со статусами NEW,\n" +
                 "Добавлен 1 эпик с 1 подзадачей со статусом NEW");
         print(tm);

@@ -16,7 +16,7 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "com.koval.kanban.model.SubTask{name='" + super.name +
+        return "SubTask{name='" + super.name +
                 "', description='" + super.description +
                 "', id='" + super.id +
                 "', status='" + super.status +

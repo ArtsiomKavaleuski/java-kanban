@@ -26,7 +26,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "com.koval.kanban.model.Epic{name='" + super.name +
+        return "Epic{name='" + super.name +
                 "', description='" + super.description +
                 "', id='" + super.id +
                 "', status='" + super.status +

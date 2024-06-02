@@ -39,7 +39,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "com.koval.kanban.model.Task{name='" + name +
+        return "Task{name='" + name +
                 "', description='" + description +
                 "', id='" + id +
                 "', status='" + status + "'}";
