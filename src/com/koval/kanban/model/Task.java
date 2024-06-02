@@ -1,3 +1,7 @@
+package com.koval.kanban.model;
+
+import com.koval.kanban.service.TaskStatus;
+
 import java.util.Objects;
 
 public class Task {
@@ -35,7 +39,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{name='" + name +
+        return "com.koval.kanban.model.Task{name='" + name +
                 "', description='" + description +
                 "', id='" + id +
                 "', status='" + status + "'}";

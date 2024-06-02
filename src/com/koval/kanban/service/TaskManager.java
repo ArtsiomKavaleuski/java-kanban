@@ -1,3 +1,9 @@
+package com.koval.kanban.service;
+
+import com.koval.kanban.model.Epic;
+import com.koval.kanban.model.SubTask;
+import com.koval.kanban.model.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,7 +23,7 @@ public class TaskManager {
 
     public void addToSubtasks(SubTask subTask) {
         subtasks.computeIfAbsent(subTask.getId(), k -> subTask);
-        epics.get(subTask.getEpicId()).addSubTaskId(subTask.id);
+        epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
         updateEpicStatus(subTask);
     }
 

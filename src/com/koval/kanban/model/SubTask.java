@@ -1,3 +1,7 @@
+package com.koval.kanban.model;
+
+import com.koval.kanban.service.TaskStatus;
+
 public class SubTask extends Task {
     private final int epicId;
 
@@ -12,7 +16,7 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "SubTask{name='" + super.name +
+        return "com.koval.kanban.model.SubTask{name='" + super.name +
                 "', description='" + super.description +
                 "', id='" + super.id +
                 "', status='" + super.status +

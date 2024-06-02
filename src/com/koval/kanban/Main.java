@@ -1,4 +1,10 @@
-import java.util.Scanner;
+package com.koval.kanban;
+
+import com.koval.kanban.model.Epic;
+import com.koval.kanban.model.SubTask;
+import com.koval.kanban.model.Task;
+import com.koval.kanban.service.TaskManager;
+import com.koval.kanban.service.TaskStatus;
 
 public class Main {
 
@@ -18,11 +24,11 @@ public class Main {
         tm.addToEpics(epic2);
 
         SubTask subTask1 = new SubTask("Подзадача 1", "описание подзадачи 1", tm.getId(),
-                TaskStatus.NEW, epic1.taskId);
+                TaskStatus.NEW, epic1.getId());
         SubTask subTask2 = new SubTask("Подзадача 2", "описание подзадачи 2", tm.getId(),
-                TaskStatus.NEW, epic1.taskId);
+                TaskStatus.NEW, epic1.getId());
         SubTask subTask3 = new SubTask("Подзадача 1", "описание подзадачи 1", tm.getId(),
-                TaskStatus.NEW, epic2.taskId);
+                TaskStatus.NEW, epic2.getId());
         tm.addToSubtasks(subTask1);
         tm.addToSubtasks(subTask2);
         tm.addToSubtasks(subTask3);
@@ -33,16 +39,16 @@ public class Main {
                 "Добавлен 1 эпик с 1 подзадачей со статусом NEW");
         print(tm);
 
-        tm.updateTask(task1.getTaskId(), new Task(task1.getTaskName(), task1.taskDescription, task1.getTaskId(),
+        tm.updateTask(task1.getId(), new Task(task1.getName(), task1.getDescription(), task1.getId(),
                 TaskStatus.IN_PROGRESS));
-        tm.updateTask(task2.getTaskId(), new Task(task2.getTaskName(), task2.taskDescription, task2.getTaskId(),
+        tm.updateTask(task2.getId(), new Task(task2.getName(), task2.getDescription(), task2.getId(),
                 TaskStatus.DONE));
-        tm.updateSubTask(subTask1.getTaskId(), new SubTask(subTask1.getTaskName(), subTask1.getTaskDescription(),
-                subTask1.getTaskId(), TaskStatus.IN_PROGRESS, subTask1.getEpicId()));
-        tm.updateSubTask(subTask2.getTaskId(), new SubTask(subTask2.getTaskName(), subTask2.getTaskDescription(),
-                subTask2.getTaskId(), TaskStatus.DONE, subTask2.getEpicId()));
-        tm.updateSubTask(subTask3.getTaskId(), new SubTask(subTask3.getTaskName(), subTask2.getTaskDescription(),
-                subTask3.getTaskId(), TaskStatus.DONE, subTask3.getEpicId()));
+        tm.updateSubTask(subTask1.getId(), new SubTask(subTask1.getName(), subTask1.getDescription(),
+                subTask1.getId(), TaskStatus.IN_PROGRESS, subTask1.getEpicId()));
+        tm.updateSubTask(subTask2.getId(), new SubTask(subTask2.getName(), subTask2.getDescription(),
+                subTask2.getId(), TaskStatus.DONE, subTask2.getEpicId()));
+        tm.updateSubTask(subTask3.getId(), new SubTask(subTask3.getName(), subTask2.getDescription(),
+                subTask3.getId(), TaskStatus.DONE, subTask3.getEpicId()));
 
         System.out.println("");
         System.out.println("*".repeat(150));
@@ -54,8 +60,8 @@ public class Main {
 
         print(tm);
 
-        tm.updateSubTask(subTask1.getTaskId(), new SubTask(subTask1.getTaskName(), subTask1.getTaskDescription(),
-                subTask1.getTaskId(), TaskStatus.DONE, subTask1.getEpicId()));
+        tm.updateSubTask(subTask1.getId(), new SubTask(subTask1.getName(), subTask1.getDescription(),
+                subTask1.getId(), TaskStatus.DONE, subTask1.getEpicId()));
 
         System.out.println("");
         System.out.println("*".repeat(150));
@@ -63,8 +69,8 @@ public class Main {
                 "(ожидается изменение статуса 1-го эпика на DONE)");
         print(tm);
 
-        tm.updateEpic(epic2.getTaskId(), new Epic("Обновлённый эпик 2",
-                "Обновленное описание эпика 2", epic2.getTaskId(), epic2.getSubTaskIdList()));
+        tm.updateEpic(epic2.getId(), new Epic("Обновлённый эпик 2",
+                "Обновленное описание эпика 2", epic2.getId(), epic2.getSubTaskIdList()));
 
         System.out.println("");
         System.out.println("*".repeat(150));
@@ -72,8 +78,8 @@ public class Main {
                 "(ожидается, что его статус не поменяется)");
         print(tm);
 
-        tm.removeTaskById(task1.getTaskId());
-        tm.removeTaskById(epic2.getTaskId());
+        tm.removeTaskById(task1.getId());
+        tm.removeTaskById(epic2.getId());
 
         System.out.println("");
         System.out.println("*".repeat(150));
