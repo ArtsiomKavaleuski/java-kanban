@@ -32,9 +32,21 @@ public class TaskManager {
         tasks.put(id, task);
     }
 
+    /*
+    Пересмотрел ТЗ и решил, что если при обновлении на вход подаётся новый объект (эпик), значит вместе с его
+    созданием создаётся и новый пустой список подзадач.
+    Обновление статуса эпика будет происходить только после добавления и обновления новых подзадач.
+    Подзадачи старого эпика можно либо оставить (но тогда, как я вижу, они продолжат ссылаться на новый эпик,
+    который не будет знать, что это его подзадачи, и его статус больше не будет обновляться при обновлении статуса
+    этих подзадач). Либо, чтобы не терять данные, подзадачи можно перевести в обычные задачи.
+     */
     public void updateEpic(int id, Epic epic) {
+        for(int subTaskId : epics.get(id).getSubTaskIdList()) {
+            addToTasks(new Task(subtasks.get(subTaskId).getName(), subtasks.get(subTaskId).getDescription(),
+                    getId(), subtasks.get(subTaskId).getStatus()));
+            removeTaskById(subTaskId);
+        }
         epics.put(id, epic);
-        updateEpicStatus(id);
     }
 
     public void updateSubTask(int id, SubTask subTask) {
@@ -75,24 +87,24 @@ public class TaskManager {
         return subtasks.values();
     }
 
-    public ArrayList<SubTask> getSubTasksByEpic(int userEpicId) {
+    public ArrayList<SubTask> getSubTasksByEpic(int epicId) {
         ArrayList<SubTask> subTasksListByEpic = new ArrayList<>();
-        for (int subTaskId : epics.get(userEpicId).getSubTaskIdList()) {
+        for (int subTaskId : epics.get(epicId).getSubTaskIdList()) {
             subTasksListByEpic.add(subtasks.get(subTaskId));
         }
         return subTasksListByEpic;
     }
 
-    public Task getTaskById(int userTaskId) {
-        return tasks.get(userTaskId);
+    public Task getTaskById(int id) {
+        return tasks.get(id);
     }
 
-    public Epic getEpicById(int userEpicId) {
-        return epics.get(userEpicId);
+    public Epic getEpicById(int id) {
+        return epics.get(id);
     }
 
-    public SubTask getSubTaskById(int userSubtaskId) {
-        return subtasks.get(userSubtaskId);
+    public SubTask getSubTaskById(int id) {
+        return subtasks.get(id);
     }
 
     public void removeTasks() {
@@ -113,13 +125,13 @@ public class TaskManager {
         }
     }
 
-    public void removeTaskById(int userTaskId) {
-        if (tasks.containsKey(userTaskId)) {
-            tasks.remove(userTaskId);
-        } else if (epics.containsKey(userTaskId)) {
-            epics.remove(userTaskId);
-        } else if (subtasks.containsKey(userTaskId)) {
-            subtasks.remove(userTaskId);
+    public void removeTaskById(int id) {
+        if (tasks.containsKey(id)) {
+            tasks.remove(id);
+        } else if (epics.containsKey(id)) {
+            epics.remove(id);
+        } else if (subtasks.containsKey(id)) {
+            subtasks.remove(id);
         }
     }
 
