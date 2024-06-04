@@ -31,16 +31,8 @@ public class TaskManager {
         tasks.put(task.getId(), task);
     }
 
-    /*
-    Пересмотрел ТЗ и решил, что если при обновлении на вход подаётся новый объект (эпик), значит вместе с его
-    созданием создаётся и новый пустой список подзадач.
-    Обновление статуса эпика будет происходить только после добавления и обновления новых подзадач.
-    Подзадачи старого эпика можно либо оставить (но тогда, как я вижу, они продолжат ссылаться на новый эпик,
-    который не будет знать, что это его подзадачи, и его статус больше не будет обновляться при обновлении статуса
-    этих подзадач). Либо, чтобы не терять данные, подзадачи можно перевести в обычные задачи.
-     */
     public void updateEpic(Epic epic) {
-        for(int subTaskId : epics.get(epic.getId()).getSubTaskIdList()) {
+        for (int subTaskId : epics.get(epic.getId()).getSubTaskIdList()) {
             removeTaskById(subTaskId);
         }
         epics.put(epic.getId(), epic);
@@ -72,11 +64,17 @@ public class TaskManager {
         }
     }
 
-    public ArrayList<Task> getTasks() { return new ArrayList<>(tasks.values()); }
+    public ArrayList<Task> getTasks() {
+        return new ArrayList<>(tasks.values());
+    }
 
-    public ArrayList<Epic> getEpics() { return new ArrayList<>(epics.values());}
+    public ArrayList<Epic> getEpics() {
+        return new ArrayList<>(epics.values());
+    }
 
-    public ArrayList<SubTask> getSubTasks() { return new ArrayList<>(subtasks.values()); }
+    public ArrayList<SubTask> getSubTasks() {
+        return new ArrayList<>(subtasks.values());
+    }
 
     public ArrayList<SubTask> getSubTasksByEpic(int epicId) {
         ArrayList<SubTask> subTasksListByEpic = new ArrayList<>();
@@ -121,7 +119,9 @@ public class TaskManager {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
         } else if (epics.containsKey(id)) {
-            for (int subTaskId : epics.get(id).getSubTaskIdList()) {removeTaskById(subTaskId);}
+            for (int subTaskId : epics.get(id).getSubTaskIdList()) {
+                removeTaskById(subTaskId);
+            }
             epics.remove(id);
         } else if (subtasks.containsKey(id)) {
             subtasks.remove(id);
