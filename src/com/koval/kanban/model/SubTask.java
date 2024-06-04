@@ -3,7 +3,7 @@ package com.koval.kanban.model;
 import com.koval.kanban.service.TaskStatus;
 
 public class SubTask extends Task {
-    private final int epicId;
+    private int epicId;
 
     public SubTask(String name, String description, int id, TaskStatus status, int epicId) {
         super(name, description, id, status);

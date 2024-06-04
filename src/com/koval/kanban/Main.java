@@ -36,15 +36,15 @@ public class Main {
                 "Добавлен 1 эпик с 1 подзадачей со статусом NEW");
         print(tm);
 
-        tm.updateTask(task1.getId(), new Task(task1.getName(), task1.getDescription(), task1.getId(),
+        tm.updateTask(new Task(task1.getName(), task1.getDescription(), task1.getId(),
                 TaskStatus.IN_PROGRESS));
-        tm.updateTask(task2.getId(), new Task(task2.getName(), task2.getDescription(), task2.getId(),
+        tm.updateTask(new Task(task2.getName(), task2.getDescription(), task2.getId(),
                 TaskStatus.DONE));
-        tm.updateSubTask(subTask1.getId(), new SubTask(subTask1.getName(), subTask1.getDescription(),
+        tm.updateSubTask(new SubTask(subTask1.getName(), subTask1.getDescription(),
                 subTask1.getId(), TaskStatus.IN_PROGRESS, subTask1.getEpicId()));
-        tm.updateSubTask(subTask2.getId(), new SubTask(subTask2.getName(), subTask2.getDescription(),
+        tm.updateSubTask(new SubTask(subTask2.getName(), subTask2.getDescription(),
                 subTask2.getId(), TaskStatus.DONE, subTask2.getEpicId()));
-        tm.updateSubTask(subTask3.getId(), new SubTask(subTask3.getName(), subTask2.getDescription(),
+        tm.updateSubTask(new SubTask(subTask3.getName(), subTask2.getDescription(),
                 subTask3.getId(), TaskStatus.DONE, subTask3.getEpicId()));
 
         System.out.println("Статусы задач изменены на IN_PROGRESS и DONE, \n" +
@@ -55,17 +55,18 @@ public class Main {
 
         print(tm);
 
-        tm.updateSubTask(subTask1.getId(), new SubTask(subTask1.getName(), subTask1.getDescription(),
+        tm.updateSubTask(new SubTask(subTask1.getName(), subTask1.getDescription(),
                 subTask1.getId(), TaskStatus.DONE, subTask1.getEpicId()));
 
         System.out.println("Статус 1-й подзадачи 1-го эпика был изменен на DONE \n" +
                 "(ожидается изменение статуса 1-го эпика на DONE)");
         print(tm);
 
-        tm.updateEpic(epic2.getId(), new Epic("Обновлённый эпик 2",
-                "Обновленное описание эпика 2", epic2.getId()));
+        tm.updateEpic(new Epic("Обновлённый эпик 2","Обновленное описание эпика 2",
+                epic2.getId()));
 
-        System.out.println("Был обновлен эпик 2\n" + "(ожидается, что его статус не поменяется)");
+        System.out.println("Был обновлен эпик 2\n" + "(ожидается, что подзадачи старого эпика будут удалены," +
+                "а у обновленного эпика будет статус NEW)");
         print(tm);
 
         tm.removeTaskById(task1.getId());
