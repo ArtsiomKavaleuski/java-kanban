@@ -5,7 +5,6 @@ import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public interface TaskManager {
     void addToTasks(Task task);
@@ -46,5 +45,5 @@ public interface TaskManager {
 
     int getId();
 
-    List<Task> getHistory();
+    HistoryManager getHm();
 }

@@ -3,10 +3,10 @@ package com.koval.kanban;
 import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
-import com.koval.kanban.service.InMemoryTaskManager;
 import com.koval.kanban.service.Managers;
 import com.koval.kanban.service.TaskManager;
 import com.koval.kanban.service.TaskStatus;
+
 
 public class Main {
 
@@ -124,7 +124,7 @@ public class Main {
         }
 
         System.out.println("История:");
-        for (Task task : tm.getHistory()) {
+        for (Task task : tm.getHm().getHistory()) {
             System.out.println(task);
         }
         System.out.println(separator.repeat(numbersOfRepeat));

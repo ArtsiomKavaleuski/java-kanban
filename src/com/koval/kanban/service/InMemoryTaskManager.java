@@ -6,15 +6,13 @@ import com.koval.kanban.model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private int taskIdCounter = 0;
-    private static final int HISTORY_LIST_CAPACITY = 10;
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
     HashMap<Integer, SubTask> subtasks = new HashMap<>();
-    List<Task> historyList = new ArrayList<>(HISTORY_LIST_CAPACITY);
+    HistoryManager hm = Managers.getDefaultHistory();
 
     @Override
     public void addToTasks(Task task) {
@@ -52,7 +50,6 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(subTask);
     }
 
-    // добавил приватный метод updateEpicStatus, чтобы не дублировать код
     private void updateEpicStatus(SubTask subTask) {
         int numberOfDoneStatuses = 0;
         int numberOfNewStatuses = 0;
@@ -99,19 +96,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        updateHistoryList(tasks.get(id));
+        hm.add(tasks.get(id));
         return tasks.get(id);
     }
 
     @Override
     public Epic getEpicById(int id) {
-        updateHistoryList(epics.get(id));
+        hm.add(epics.get(id));
         return epics.get(id);
     }
 
     @Override
     public SubTask getSubTaskById(int id) {
-        updateHistoryList(subtasks.get(id));
+        hm.add(subtasks.get(id));
         return subtasks.get(id);
     }
 
@@ -170,17 +167,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getHistory() {
-        return historyList;
+    public HistoryManager getHm() {
+        return hm;
     }
 
-    // вспомогательный метод для обновления истории просмотров
-    private <T extends Task> void updateHistoryList (T task) {
-        if(historyList.size() < HISTORY_LIST_CAPACITY) {
-            historyList.addLast(task);
-        } else {
-            historyList.removeFirst();
-            historyList.addLast(task);
-        }
-    }
+
 }
