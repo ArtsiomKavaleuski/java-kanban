@@ -5,142 +5,46 @@ import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
-public class TaskManager {
-    private int taskIdCounter = 0;
-    HashMap<Integer, Task> tasks = new HashMap<>();
-    HashMap<Integer, Epic> epics = new HashMap<>();
-    HashMap<Integer, SubTask> subtasks = new HashMap<>();
+public interface TaskManager {
+    void addToTasks(Task task);
 
-    public void addToTasks(Task task) {
-        tasks.computeIfAbsent(task.getId(), k -> task);
-    }
+    void addToEpics(Epic epic);
 
-    public void addToEpics(Epic epic) {
-        epics.computeIfAbsent(epic.getId(), k -> epic);
-    }
+    void addToSubtasks(SubTask subTask);
 
-    public void addToSubtasks(SubTask subTask) {
-        subtasks.computeIfAbsent(subTask.getId(), k -> subTask);
-        epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
-        updateEpicStatus(subTask);
-    }
+    void updateTask(Task task);
 
-    public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
-    }
+    void updateEpic(Epic epic);
 
-    public void updateEpic(Epic epic) {
-        for (int subTaskId : epics.get(epic.getId()).getSubTaskIdList()) {
-            removeTaskById(subTaskId);
-        }
-        epics.put(epic.getId(), epic);
-    }
+    void updateSubTask(SubTask subTask);
 
-    public void updateSubTask(SubTask subTask) {
-        subtasks.put(subTask.getId(), subTask);
-        updateEpicStatus(subTask);
-    }
+    ArrayList<Task> getTasks();
 
-    // добавил приватный метод updateEpicStatus, чтобы не дублировать код
-    private void updateEpicStatus(SubTask subTask) {
-        int numberOfDoneStatuses = 0;
-        int numberOfNewStatuses = 0;
-        for (int subTaskId : epics.get(subTask.getEpicId()).getSubTaskIdList()) {
-            if (subtasks.get(subTaskId).getStatus() == TaskStatus.DONE) {
-                numberOfDoneStatuses++;
-                epics.get(subTask.getEpicId()).setStatus(TaskStatus.IN_PROGRESS);
-            } else if (subtasks.get(subTaskId).getStatus() == TaskStatus.IN_PROGRESS) {
-                epics.get(subTask.getEpicId()).setStatus(TaskStatus.IN_PROGRESS);
-            } else if (subtasks.get(subTaskId).getStatus() == TaskStatus.NEW) {
-                numberOfNewStatuses++;
-            }
-        }
-        if (numberOfDoneStatuses == epics.get(subTask.getEpicId()).getSubTaskIdList().size()) {
-            epics.get(subTask.getEpicId()).setStatus(TaskStatus.DONE);
-        } else if (numberOfNewStatuses == epics.get(subTask.getEpicId()).getSubTaskIdList().size()) {
-            epics.get(subTask.getEpicId()).setStatus(TaskStatus.NEW);
-        }
-    }
+    ArrayList<Epic> getEpics();
 
-    public ArrayList<Task> getTasks() {
-        return new ArrayList<>(tasks.values());
-    }
+    ArrayList<SubTask> getSubTasks();
 
-    public ArrayList<Epic> getEpics() {
-        return new ArrayList<>(epics.values());
-    }
+    ArrayList<SubTask> getSubTasksByEpic(int epicId);
 
-    public ArrayList<SubTask> getSubTasks() {
-        return new ArrayList<>(subtasks.values());
-    }
+    Task getTaskById(int id);
 
-    public ArrayList<SubTask> getSubTasksByEpic(int epicId) {
-        ArrayList<SubTask> subTasksListByEpic = new ArrayList<>();
-        for (int subTaskId : epics.get(epicId).getSubTaskIdList()) {
-            subTasksListByEpic.add(subtasks.get(subTaskId));
-        }
-        return subTasksListByEpic;
-    }
+    Epic getEpicById(int id);
 
-    public Task getTaskById(int id) {
-        return tasks.get(id);
-    }
+    SubTask getSubTaskById(int id);
 
-    public Epic getEpicById(int id) {
-        return epics.get(id);
-    }
+    void removeTasks();
 
-    public SubTask getSubTaskById(int id) {
-        return subtasks.get(id);
-    }
+    void removeEpics();
 
-    public void removeTasks() {
-        if (!tasks.isEmpty()) {
-            tasks.clear();
-        }
-    }
+    void removeSubtasks();
 
-    public void removeEpics() {
-        if (!epics.isEmpty()) {
-            subtasks.clear();
-            epics.clear();
-        }
-    }
+    void removeTaskById(int id);
 
-    public void removeSubtasks() {
-        if (!subtasks.isEmpty()) {
-            subtasks.clear();
-        }
-    }
+    void removeAllTasks();
 
-    public void removeTaskById(int id) {
-        if (tasks.containsKey(id)) {
-            tasks.remove(id);
-        } else if (epics.containsKey(id)) {
-            for (int subTaskId : epics.get(id).getSubTaskIdList()) {
-                removeTaskById(subTaskId);
-            }
-            epics.remove(id);
-        } else if (subtasks.containsKey(id)) {
-            subtasks.remove(id);
-        }
-    }
+    int getId();
 
-    public void removeAllTasks() {
-        if (!tasks.isEmpty()) {
-            tasks.clear();
-        }
-        if (!epics.isEmpty()) {
-            epics.clear();
-        }
-        if (!subtasks.isEmpty()) {
-            subtasks.clear();
-        }
-    }
-
-    public int getId() {
-        return taskIdCounter++;
-    }
+    List<Task> getHistory();
 }
