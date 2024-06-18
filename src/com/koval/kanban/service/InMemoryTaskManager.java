@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int taskIdCounter = 0;
+    private static int taskIdCounter = 0;
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
     HashMap<Integer, SubTask> subtasks = new HashMap<>();
@@ -26,8 +26,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addToSubtasks(SubTask subTask) {
-        subtasks.computeIfAbsent(subTask.getId(), k -> subTask);
-        epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
+        if (subTask.getEpicId() != subTask.getId()) {
+            subtasks.computeIfAbsent(subTask.getId(), k -> subTask);
+            epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
+        }
         updateEpicStatus(subTask);
     }
 
@@ -159,6 +161,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (!subtasks.isEmpty()) {
             subtasks.clear();
         }
+        taskIdCounter = 0;
     }
 
     @Override

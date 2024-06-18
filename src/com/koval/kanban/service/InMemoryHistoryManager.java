@@ -24,4 +24,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     public List<Task> getHistory() {
         return historyList;
     }
+
+    @Override
+    public int getHistoryListCapacity() {
+        return HISTORY_LIST_CAPACITY;
+    }
 }

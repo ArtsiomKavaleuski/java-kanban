@@ -99,6 +99,11 @@ public class Main {
 
         System.out.println("Удалена 1-я задача\n" + "Удален 2-й эпик");
         printAllTasks(tm);
+
+        for (int i = 0; i < 10; i++) {tm.getTaskById(1);}
+        System.out.println("2-я задача была просмотрена 10 раз. \n" +
+                "Ожидается, что список истрии просмотров будет состоять только из просмотров задачи №2.");
+        printAllTasks(tm);
     }
 
     private static void printAllTasks(TaskManager tm) {

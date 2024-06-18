@@ -7,6 +7,7 @@ import com.koval.kanban.model.Task;
 import java.util.ArrayList;
 
 public interface TaskManager {
+
     void addToTasks(Task task);
 
     void addToEpics(Epic epic);
