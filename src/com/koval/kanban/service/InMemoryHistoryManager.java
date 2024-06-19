@@ -11,7 +11,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     List<Task> historyList = new ArrayList<>(HISTORY_LIST_CAPACITY);
 
     @Override
-    public <T extends Task> void add(T task) {
+    public void add(Task task) {
         if (historyList.size() < HISTORY_LIST_CAPACITY) {
             historyList.addLast(task);
         } else {
@@ -23,10 +23,5 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public List<Task> getHistory() {
         return historyList;
-    }
-
-    @Override
-    public int getHistoryListCapacity() {
-        return HISTORY_LIST_CAPACITY;
     }
 }

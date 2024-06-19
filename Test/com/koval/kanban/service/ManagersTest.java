@@ -32,13 +32,4 @@ class ManagersTest {
         HistoryManager hm = Managers.getDefaultHistory();
         assertNotNull(hm.getHistory());
     }
-
-    @Test
-    public void shouldReturnTheFieldOfInitialisedExampleOfInMemoryHistoryManagerClass() {
-        HistoryManager hm = Managers.getDefaultHistory();
-        int historyListCapacityExpected = 10;
-        int historyListCapacityActual = hm.getHistoryListCapacity();
-        assertEquals(historyListCapacityExpected, historyListCapacityActual, "значения не равны");
-    }
-
 }
