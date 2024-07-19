@@ -3,30 +3,34 @@ package com.koval.kanban.service;
 import com.koval.kanban.model.Task;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static final int HISTORY_LIST_CAPACITY = 10;
-
-    List<Task> historyList = new ArrayList<>(HISTORY_LIST_CAPACITY);
+    Map<Integer, Task> historyMap = new LinkedHashMap<>();
 
     @Override
     public <T extends Task> void add(T task) {
-        if (historyList.size() < HISTORY_LIST_CAPACITY) {
-            historyList.addLast(task);
+        if (historyMap.containsKey(task.getId())) {
+            historyMap.remove(task.getId());
+            historyMap.put(task.getId(), task);
         } else {
-            historyList.removeFirst();
-            historyList.addLast(task);
+            historyMap.put(task.getId(), task);
         }
     }
 
     @Override
     public List<Task> getHistory() {
+        List<Task> historyList = new ArrayList<>(historyMap.values());
         return historyList;
     }
 
     @Override
-    public int getHistoryListCapacity() {
-        return HISTORY_LIST_CAPACITY;
+    public void remove(int id) {
+        if(historyMap.containsKey(id)){
+            historyMap.remove(id);
+        }
     }
+
 }
