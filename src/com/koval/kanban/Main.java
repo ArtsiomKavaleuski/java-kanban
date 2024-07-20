@@ -83,9 +83,10 @@ public class Main {
     }
 
     private static void printAllTasks(TaskManager tm) {
-        String separator = "═";
+        String separator1 = "═";
+        String separator2 = "-";
         int numbersOfRepeat = 120;
-        System.out.println(separator.repeat(numbersOfRepeat));
+        System.out.println(separator2.repeat(numbersOfRepeat));
 
         System.out.println("Задачи:");
         for (Task task : tm.getTasks()) {
@@ -108,6 +109,6 @@ public class Main {
         for (Task task : tm.getHm().getHistory()) {
             System.out.println(task);
         }
-        System.out.println(separator.repeat(numbersOfRepeat));
+        System.out.println(separator1.repeat(numbersOfRepeat));
     }
 }
