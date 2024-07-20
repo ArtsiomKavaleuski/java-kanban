@@ -6,7 +6,8 @@ import com.koval.kanban.model.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class InMemoryTaskManagerTest {
     TaskManager tm = Managers.getDefault();
@@ -89,7 +90,7 @@ class InMemoryTaskManagerTest {
         SubTask subTask = new SubTask("subTaskName", "subTaskDescription", epicId,
                 TaskStatus.NEW, epicId);
         tm.addToSubtasks(subTask);
-        assertNull(tm.getSubTaskById(epic1.getId()), "эпик был добален к себе в подзадачу");
+        assertEquals(tm.getEpicById(1).getSubTaskIdList().size(), 0, "эпик был добавлен к себе в подзадачу");
     }
 
     @Test
@@ -102,7 +103,7 @@ class InMemoryTaskManagerTest {
                 TaskStatus.NEW, epicId);
         tm.addToSubtasks(subTask);
         tm.updateEpic(new Epic(subTask.getName(), subTask.getDescription(), subTask.getEpicId()));
-        assertNotEquals(epic1.getSubTaskIdList(), tm.getEpics().getFirst().getSubTaskIdList(),
+        assertEquals(subTask.getName(), tm.getEpics().getFirst().getName(),
                 "подзадача была сделана своим же эпиком");
         assertNotEquals(tm.getEpics().getFirst().getSubTaskIdList().size(), subTaskId,
                 "список ID подзадач эпика содержит ID самого эпика");
