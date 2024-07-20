@@ -11,6 +11,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     Map<Integer, Task> historyMap = new LinkedHashMap<>();
 
     @Override
+
     public <T extends Task> void add(T task) {
         if (historyMap.containsKey(task.getId())) {
             historyMap.remove(task.getId());
@@ -32,5 +33,4 @@ public class InMemoryHistoryManager implements HistoryManager {
             historyMap.remove(id);
         }
     }
-
 }
