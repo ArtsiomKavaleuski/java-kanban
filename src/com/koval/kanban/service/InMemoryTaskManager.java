@@ -189,7 +189,7 @@ public class InMemoryTaskManager implements TaskManager {
         return hm;
     }
 
-    public void removeSubTaskFromEpicSubTaskIds (int subTaskId) {
+    public void removeSubTaskFromEpicSubTaskIds(int subTaskId) {
         epics.get(subtasks.get(subTaskId).getEpicId()).removeSubTaskId(subTaskId);
     }
 

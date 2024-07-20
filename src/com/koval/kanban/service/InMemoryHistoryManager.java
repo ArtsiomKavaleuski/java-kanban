@@ -28,7 +28,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        if(historyMap.containsKey(id)){
+        if (historyMap.containsKey(id)) {
             historyMap.remove(id);
         }
     }

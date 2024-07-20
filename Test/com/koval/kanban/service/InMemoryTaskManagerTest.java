@@ -109,8 +109,8 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void deletedSubTasksShouldNotKeepOldId () {
-        Epic epic1 = new Epic("epic1","epic1 description",0);
+    void deletedSubTasksShouldNotKeepOldId() {
+        Epic epic1 = new Epic("epic1", "epic1 description", 0);
         SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW, 0);
         SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW, 0);
         tm.addToEpics(epic1);
@@ -123,13 +123,13 @@ class InMemoryTaskManagerTest {
 
     @Test
     void epicShouldNotKeepIdsOfDDeletedSubTasks() {
-        Epic epic1 = new Epic("epic1","epic1 description",0);
+        Epic epic1 = new Epic("epic1", "epic1 description", 0);
         SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW, 0);
         SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW, 0);
         tm.addToEpics(epic1);
         tm.addToSubtasks(subTask1);
         tm.addToSubtasks(subTask2);
         tm.removeTaskById(subTask2.getId());
-        assertEquals(tm.getEpicById(0).getSubTaskIdList().contains(subTask2.getId()), false,"в эпике храанится id удаленной подзаадачи");
+        assertEquals(tm.getEpicById(0).getSubTaskIdList().contains(subTask2.getId()), false, "в эпике храанится id удаленной подзаадачи");
     }
 }
