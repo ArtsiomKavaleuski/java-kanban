@@ -6,6 +6,7 @@ import com.koval.kanban.model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
     private static int taskIdCounter = 0;
@@ -40,9 +41,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Epic epic) {
-        for (int subTaskId : epics.get(epic.getId()).getSubTaskIdList()) {
-            removeTaskById(subTaskId);
-        }
+        removeSubTasksByEpic(epic);
         epics.put(epic.getId(), epic);
     }
 
@@ -142,6 +141,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeSubtasks() {
         if (!subtasks.isEmpty()) {
             for (int id : subtasks.keySet()) {
+                removeSubTaskFromEpicSubTaskIds(id);
                 hm.remove(id);
             }
             subtasks.clear();
@@ -154,13 +154,12 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.remove(id);
             hm.remove(id);
         } else if (epics.containsKey(id)) {
-            for (int subTaskId : epics.get(id).getSubTaskIdList()) {
-                removeTaskById(subTaskId);
-                hm.remove(subTaskId);
-            }
+            removeSubTasksByEpic(epics.get(id));
             epics.remove(id);
             hm.remove(id);
         } else if (subtasks.containsKey(id)) {
+            removeSubTaskFromEpicSubTaskIds(id);
+            subtasks.get(id).resetId();
             subtasks.remove(id);
             hm.remove(id);
         }
@@ -188,6 +187,20 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public HistoryManager getHm() {
         return hm;
+    }
+
+    public void removeSubTaskFromEpicSubTaskIds (int subTaskId) {
+        epics.get(subtasks.get(subTaskId).getEpicId()).removeSubTaskId(subTaskId);
+    }
+
+    public void removeSubTasksByEpic(Epic epic) {
+        if (epics.get(epic.getId()).getSubTaskIdList() != null) {
+            CopyOnWriteArrayList<Integer> tempSubTasksList = new CopyOnWriteArrayList<>(epics.get(epic.getId()).getSubTaskIdList());
+            for (int subTaskId : tempSubTasksList) {
+                removeTaskById(subTaskId);
+                hm.remove(subTaskId);
+            }
+        }
     }
 
 

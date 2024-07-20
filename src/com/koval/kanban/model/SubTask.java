@@ -14,6 +14,9 @@ public class SubTask extends Task {
         return epicId;
     }
 
+    public void resetId() {this.id = -1;
+    }
+
     @Override
     public String toString() {
         return "SubTask{name='" + super.name +

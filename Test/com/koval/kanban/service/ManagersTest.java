@@ -2,7 +2,8 @@ package com.koval.kanban.service;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ManagersTest {
     @Test
@@ -32,13 +33,4 @@ class ManagersTest {
         HistoryManager hm = Managers.getDefaultHistory();
         assertNotNull(hm.getHistory());
     }
-
-    @Test
-    public void shouldReturnTheFieldOfInitialisedExampleOfInMemoryHistoryManagerClass() {
-        HistoryManager hm = Managers.getDefaultHistory();
-        int historyListCapacityExpected = 10;
-        int historyListCapacityActual = hm.getHistoryListCapacity();
-        assertEquals(historyListCapacityExpected, historyListCapacityActual, "значения не равны");
-    }
-
 }

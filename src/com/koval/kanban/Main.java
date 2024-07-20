@@ -27,83 +27,59 @@ public class Main {
                 TaskStatus.NEW, epic1.getId());
         SubTask subTask2 = new SubTask("Подзадача 2", "описание подзадачи 2", tm.getId(),
                 TaskStatus.NEW, epic1.getId());
-        SubTask subTask3 = new SubTask("Подзадача 1", "описание подзадачи 1", tm.getId(),
-                TaskStatus.NEW, epic2.getId());
+        SubTask subTask3 = new SubTask("Подзадача 3", "описание подзадачи 3", tm.getId(),
+                TaskStatus.NEW, epic1.getId());
         tm.addToSubtasks(subTask1);
         tm.addToSubtasks(subTask2);
         tm.addToSubtasks(subTask3);
 
-        System.out.println("Добавлены 2 задачи со статусами NEW и IN_PROGRESS, \n" +
-                "Добавлен 1 эпик с 2 подзадачами со статусами NEW,\n" +
-                "Добавлен 1 эпик с 1 подзадачей со статусом NEW");
+        System.out.println("Добавлены 2 задачи, 1 эпик с 3 подзадачами и 1 эпик без подзадач");
         printAllTasks(tm);
 
-        tm.updateTask(new Task(task1.getName(), task1.getDescription(), task1.getId(),
-                TaskStatus.IN_PROGRESS));
-        tm.updateTask(new Task(task2.getName(), task2.getDescription(), task2.getId(),
-                TaskStatus.DONE));
-        tm.updateSubTask(new SubTask(subTask1.getName(), subTask1.getDescription(),
-                subTask1.getId(), TaskStatus.IN_PROGRESS, subTask1.getEpicId()));
-        tm.updateSubTask(new SubTask(subTask2.getName(), subTask2.getDescription(),
-                subTask2.getId(), TaskStatus.DONE, subTask2.getEpicId()));
-        tm.updateSubTask(new SubTask(subTask3.getName(), subTask2.getDescription(),
-                subTask3.getId(), TaskStatus.DONE, subTask3.getEpicId()));
+        tm.getTaskById(task1.getId());
+        tm.getEpicById(epic2.getId());
+        tm.getSubTaskById(subTask3.getId());
+        tm.getEpicById(epic1.getId());
+        tm.getTaskById(task1.getId());
+        tm.getEpicById(epic2.getId());
 
-        System.out.println("Статусы задач изменены на IN_PROGRESS и DONE, \n" +
-                "Статусы подзадач 1-го эпика изменены на IN_PROGRESS и DONE \n" +
-                "(ожидается изменение статуса 1-го эпика на IN_PROGRESS), \n" +
-                "Статус подзадачи 2-го эпика изменен на DONE \n" +
-                "(ожидается изменение статуса 2-го эпика на DONE)");
-
+        System.out.println("Просмотрены: задача 1, эпик 2, подзадача 3, эпик 1, задача 1, эпик 2 \n" +
+                "Ожидается, что в истории просмотров не будет повторов и будут отражены только последние " +
+                "просмотры всех задач \n" +
+                "А именно: подзадача 3, эпик 1, задача 1, эпик 2.");
         printAllTasks(tm);
 
-        tm.getTaskById(0);
-        tm.getTaskById(1);
-        tm.getEpicById(2);
-        tm.getEpicById(3);
-        tm.getSubTaskById(4);
-        tm.getSubTaskById(5);
-        tm.getSubTaskById(6);
-        tm.getTaskById(0);
-        tm.getTaskById(1);
-        tm.getEpicById(2);
+        tm.getTaskById(task1.getId());
+        tm.getTaskById(task2.getId());
+        tm.getEpicById(epic1.getId());
+        tm.getSubTaskById(subTask2.getId());
+        tm.getSubTaskById(subTask1.getId());
+        tm.getSubTaskById(subTask3.getId());
+        tm.getEpicById(epic1.getId());
+        tm.getTaskById(task1.getId());
+        tm.getEpicById(epic1.getId());
 
-        System.out.println("Было просмотрено 10 задач по ID");
-        printAllTasks(tm);
-
-        tm.updateSubTask(new SubTask(subTask1.getName(), subTask1.getDescription(),
-                subTask1.getId(), TaskStatus.DONE, subTask1.getEpicId()));
-        tm.getEpicById(3);
-        tm.getEpicById(2);
-
-        System.out.println("Статус 1-й подзадачи 1-го эпика был изменен на DONE \n" +
-                "(ожидается изменение статуса 1-го эпика на DONE) \n" +
-                "Также было просмотрено еще две задачи. \n" +
-                "(Ожидается что из истории будут удалены два первых просмотра, \n" +
-                "а в конец списка добавятся два последних.");
-
-        printAllTasks(tm);
-
-        tm.updateEpic(new Epic("Обновлённый эпик 2","Обновленное описание эпика 2",
-                epic2.getId()));
-        tm.getSubTaskById(5);
-
-        System.out.println("Был обновлен эпик 2\n" + "(ожидается, что подзадачи старого эпика будут удалены," +
-                "а у обновленного эпика будет статус NEW). \n" +
-                "Также по ID была просмотрена еще одна задача. \n" +
-                "(Ожидается смещение списка вверх на одну позицию).");
+        System.out.println("Снова были просмотрены: задача 1, задача 2, эпик 1, подзадача 2, подзадача 1, подзадача 3, " +
+                "эпик 1, задача 1, эпик 1 (все, кроме эпика 2) \n" +
+                "Ожидается, что в истории просмотров все также не будет повторов и будут отражены только последние " +
+                "просмотры всех задач \n" +
+                "А именно: эпик 2, задача 2, подзадача 2, подзадача 1, подзадача 3, задача 1, эпик 1.");
         printAllTasks(tm);
 
         tm.removeTaskById(task1.getId());
-        tm.removeTaskById(epic2.getId());
 
-        System.out.println("Удалена 1-я задача\n" + "Удален 2-й эпик");
+        System.out.println("Была удалена задача 1 \n" +
+                "Ожидается, что ее просмотр в истории просмотров будет удален");
         printAllTasks(tm);
 
-        for (int i = 0; i < 10; i++) {tm.getTaskById(1);}
-        System.out.println("2-я задача была просмотрена 10 раз. \n" +
-                "Ожидается, что список истрии просмотров будет состоять только из просмотров задачи №2.");
+        tm.removeTaskById(epic1.getId());
+
+        System.out.println("Был удален эпик 1 с тремя подзадачами \n" +
+                "Ожидается, что в истории просмотров будет удален просмотр самого эпика, " +
+                "а также просмотры его подзадач");
         printAllTasks(tm);
+
+
     }
 
     private static void printAllTasks(TaskManager tm) {
