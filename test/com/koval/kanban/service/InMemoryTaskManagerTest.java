@@ -6,7 +6,8 @@ import com.koval.kanban.model.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class InMemoryTaskManagerTest {
     TaskManager tm = Managers.getDefault();
@@ -89,7 +90,7 @@ class InMemoryTaskManagerTest {
         SubTask subTask = new SubTask("subTaskName", "subTaskDescription", epicId,
                 TaskStatus.NEW, epicId);
         tm.addToSubtasks(subTask);
-        assertNull(tm.getSubTaskById(epic1.getId()), "эпик был добален к себе в подзадачу");
+        assertEquals(tm.getEpicById(1).getSubTaskIds().size(), 0, "эпик был добавлен к себе в подзадачу");
     }
 
     @Test
@@ -102,9 +103,34 @@ class InMemoryTaskManagerTest {
                 TaskStatus.NEW, epicId);
         tm.addToSubtasks(subTask);
         tm.updateEpic(new Epic(subTask.getName(), subTask.getDescription(), subTask.getEpicId()));
-        assertNotEquals(epic1.getSubTaskIdList(), tm.getEpics().getFirst().getSubTaskIdList(),
+        assertEquals(subTask.getName(), tm.getEpics().getFirst().getName(),
                 "подзадача была сделана своим же эпиком");
-        assertNotEquals(tm.getEpics().getFirst().getSubTaskIdList().size(), subTaskId,
+        assertNotEquals(tm.getEpics().getFirst().getSubTaskIds().size(), subTaskId,
                 "список ID подзадач эпика содержит ID самого эпика");
+    }
+
+    @Test
+    void deletedSubTasksShouldNotKeepOldId() {
+        Epic epic1 = new Epic("epic1", "epic1 description", 0);
+        SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW, 0);
+        SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW, 0);
+        tm.addToEpics(epic1);
+        tm.addToSubtasks(subTask1);
+        tm.addToSubtasks(subTask2);
+        tm.removeTaskById(subTask2.getId());
+        assertNotEquals(subTask2.getId(), 2, "после удаления подзадача продолжаает хранить внутри себя старый ID");
+
+    }
+
+    @Test
+    void epicShouldNotKeepIdsOfDDeletedSubTasks() {
+        Epic epic1 = new Epic("epic1", "epic1 description", 0);
+        SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW, 0);
+        SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW, 0);
+        tm.addToEpics(epic1);
+        tm.addToSubtasks(subTask1);
+        tm.addToSubtasks(subTask2);
+        tm.removeTaskById(subTask2.getId());
+        assertEquals(tm.getEpicById(0).getSubTaskIds().contains(subTask2.getId()), false, "в эпике храанится id удаленной подзаадачи");
     }
 }
