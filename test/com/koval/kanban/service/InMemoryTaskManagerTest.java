@@ -90,7 +90,7 @@ class InMemoryTaskManagerTest {
         SubTask subTask = new SubTask("subTaskName", "subTaskDescription", epicId,
                 TaskStatus.NEW, epicId);
         tm.addToSubtasks(subTask);
-        assertEquals(tm.getEpicById(1).getSubTaskIdList().size(), 0, "эпик был добавлен к себе в подзадачу");
+        assertEquals(tm.getEpicById(1).getSubTaskIds().size(), 0, "эпик был добавлен к себе в подзадачу");
     }
 
     @Test
@@ -105,7 +105,7 @@ class InMemoryTaskManagerTest {
         tm.updateEpic(new Epic(subTask.getName(), subTask.getDescription(), subTask.getEpicId()));
         assertEquals(subTask.getName(), tm.getEpics().getFirst().getName(),
                 "подзадача была сделана своим же эпиком");
-        assertNotEquals(tm.getEpics().getFirst().getSubTaskIdList().size(), subTaskId,
+        assertNotEquals(tm.getEpics().getFirst().getSubTaskIds().size(), subTaskId,
                 "список ID подзадач эпика содержит ID самого эпика");
     }
 
@@ -131,6 +131,6 @@ class InMemoryTaskManagerTest {
         tm.addToSubtasks(subTask1);
         tm.addToSubtasks(subTask2);
         tm.removeTaskById(subTask2.getId());
-        assertEquals(tm.getEpicById(0).getSubTaskIdList().contains(subTask2.getId()), false, "в эпике храанится id удаленной подзаадачи");
+        assertEquals(tm.getEpicById(0).getSubTaskIds().contains(subTask2.getId()), false, "в эпике храанится id удаленной подзаадачи");
     }
 }

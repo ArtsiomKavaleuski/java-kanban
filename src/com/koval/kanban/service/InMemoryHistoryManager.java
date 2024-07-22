@@ -13,24 +13,17 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
 
     public <T extends Task> void add(T task) {
-        if (historyMap.containsKey(task.getId())) {
-            historyMap.remove(task.getId());
-            historyMap.put(task.getId(), task);
-        } else {
-            historyMap.put(task.getId(), task);
-        }
+        historyMap.computeIfPresent(task.getId(), (a, b) -> b = task);
+        historyMap.putIfAbsent(task.getId(), task);
     }
 
     @Override
     public List<Task> getHistory() {
-        List<Task> historyList = new ArrayList<>(historyMap.values());
-        return historyList;
+        return new ArrayList<>(historyMap.values());
     }
 
     @Override
     public void remove(int id) {
-        if (historyMap.containsKey(id)) {
-            historyMap.remove(id);
-        }
+        historyMap.remove(id);
     }
 }
