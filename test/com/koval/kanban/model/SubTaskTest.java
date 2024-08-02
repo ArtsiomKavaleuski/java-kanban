@@ -3,7 +3,7 @@ package com.koval.kanban.model;
 import com.koval.kanban.service.TaskStatus;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubTaskTest {
     @Test
