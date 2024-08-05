@@ -7,6 +7,11 @@ import com.koval.kanban.model.Task;
 import java.io.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+    File autoSave;
+
+    public FileBackedTaskManager(File file){
+        this.autoSave = file;
+    }
     @Override
     public void addToTasks(Task task) {
         super.addToTasks(task);
@@ -19,7 +24,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     @Override
     public void addToEpics(Epic epic) {
-        super.addToEpics(epic);try {
+        super.addToEpics(epic);
+        try {
             save();
         } catch (ManagerSaveException e) {
             e.getMessage();
@@ -133,13 +139,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     public void save() throws ManagerSaveException {
-        File dir = new File("src/com/koval/kanban/resources");
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-        File file = new File(dir, "TaskManager.csv");
-
-        try (Writer fileWriter = new FileWriter(file)) {
+        try (Writer fileWriter = new FileWriter(autoSave)) {
+            if(tasks.isEmpty() && epics.isEmpty() && subtasks.isEmpty()) {
+                fileWriter.write("");
+                throw new ManagerSaveException("Был сохранен пустой файл.");
+            }
             fileWriter.write("id,type,name,status,description,epic\n");
             for (Task task : super.getTasks()) {
                 fileWriter.write(taskToString(task) + "\n");
@@ -175,11 +179,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return task;
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) throws IOException {
-        FileBackedTaskManager fbTaskManager = new FileBackedTaskManager();
+    public static FileBackedTaskManager loadFromFile(File file) throws IOException, ManagerSaveException {
+        FileBackedTaskManager fbTaskManager = new FileBackedTaskManager(file);
         try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
             while (fileReader.ready()) {
                 String line = fileReader.readLine();
+                if(line == null) {
+                    throw new ManagerSaveException("Файл пуст.");
+                }
                 String[] split = line.split(",");
                 String type = split[1];
                 if (type.equals("TASK")) {
@@ -192,12 +199,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             }
         } catch (IOException e) {
             e.getStackTrace();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
         }
         return fbTaskManager;
     }
 
-    public static void main(String[] args) throws IOException {
-        TaskManager fb = new FileBackedTaskManager();
+    public static void main(String[] args) throws IOException, ManagerSaveException {
+        File dir = new File("src/com/koval/kanban/resources");
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        File file = new File(dir, "TaskManager.csv");
+
+        TaskManager fb = new FileBackedTaskManager(file);
+
         Task task1 = new Task("Задача 1", "описание задачи 1", fb.getId(), TaskStatus.NEW);
         Task task2 = new Task("Задача 2", "описание задачи 2", fb.getId(), TaskStatus.IN_PROGRESS);
         fb.addToTasks(task1);
@@ -218,14 +234,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         fb.addToSubtasks(subTask2);
         fb.addToSubtasks(subTask3);
 
-        File savedTaskManager = new File("src/com/koval/kanban/resources/TaskManager.csv");
-        TaskManager fbTaskManager = loadFromFile(savedTaskManager);
+        try{
+            FileBackedTaskManager fbTaskManagerFromFile = loadFromFile(file);
+            System.out.println("---".repeat(30));
+            System.out.println("Задачи сохраненные в файл были загружены в новый менеджер: " +
+                    fb.getTasks().equals(fbTaskManagerFromFile.getTasks()));
+            System.out.println("Эпики сохраненные в файл были загружены в новый менеджер: " +
+                    fb.getEpics().equals(fbTaskManagerFromFile.getEpics()));
+            System.out.println("Подзадачи сохраненные в файл были загружены в новый менеджер: " +
+                    fb.getSubTasks().equals(fbTaskManagerFromFile.getSubTasks()));
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
 
-        System.out.println(fbTaskManager.getTasks());
-        System.out.println(fbTaskManager.getEpicById(3));
-        System.out.println(fbTaskManager.getHm().getHistory());
-
-        System.out.println(fb.equals(fbTaskManager));
     }
 
 }

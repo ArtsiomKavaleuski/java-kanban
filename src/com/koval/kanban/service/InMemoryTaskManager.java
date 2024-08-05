@@ -6,6 +6,7 @@ import com.koval.kanban.model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -204,4 +205,25 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        InMemoryTaskManager that = (InMemoryTaskManager) o;
+
+        if (!Objects.equals(tasks, that.tasks)) return false;
+        if (!Objects.equals(epics, that.epics)) return false;
+        if (!Objects.equals(subtasks, that.subtasks)) return false;
+        return Objects.equals(hm, that.hm);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = tasks != null ? tasks.hashCode() : 0;
+        result = 31 * result + (epics != null ? epics.hashCode() : 0);
+        result = 31 * result + (subtasks != null ? subtasks.hashCode() : 0);
+        result = 31 * result + (hm != null ? hm.hashCode() : 0);
+        return result;
+    }
 }
