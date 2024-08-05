@@ -4,10 +4,7 @@ import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     @Override
@@ -123,16 +120,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         String taskString;
         if (task.getClass().equals(SubTask.class)) {
             taskString = String.format("%d,%s,%s,%s,%s,%d", task.getId(),
-                    TaskTypes.SUBTASK.toString().toUpperCase(), task.getName(), task.getStatus(),
-                    task.getDescription(), ((SubTask) task).getEpicId());
+                    TaskTypes.SUBTASK.toString(), task.getName(), task.getStatus(), task.getDescription(),
+                    ((SubTask) task).getEpicId());
         } else if (task.getClass().equals(Epic.class)) {
-            taskString = String.format("%d,%s,%s,%s,%s,", task.getId(),
-                    TaskTypes.EPIC.toString().toUpperCase(), task.getName(), task.getStatus(),
-                    task.getDescription());
+            taskString = String.format("%d,%s,%s,%s,%s,", task.getId(), TaskTypes.EPIC.toString(), task.getName(),
+                    task.getStatus(), task.getDescription());
         } else {
-            taskString = String.format("%d,%s,%s,%s,%s,", task.getId(),
-                    TaskTypes.TASK.toString().toUpperCase(), task.getName(), task.getStatus(),
-                    task.getDescription());
+            taskString = String.format("%d,%s,%s,%s,%s,", task.getId(), TaskTypes.TASK.toString(), task.getName(),
+                    task.getStatus(), task.getDescription());
         }
         return taskString;
     }
@@ -160,6 +155,47 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
+    public Task stringToTask(String value) {
+        Task task;
+        String[] split = value.split(",");
+        int id = Integer.parseInt(split[0]);
+        TaskTypes type = TaskTypes.valueOf(split[1]);
+        String name = split[2];
+        TaskStatus status = TaskStatus.valueOf(split[3]);
+        String description = split[4];
+
+        if (type.equals(TaskTypes.SUBTASK)) {
+            int epicId = Integer.parseInt(split[5]);
+            task = new SubTask(name, description, id, status, epicId);
+        } else if (type.equals(TaskTypes.EPIC)) {
+            task = new Epic(name, description, id);
+        } else {
+            task = new Task(name, description, id, status);
+        }
+        return task;
+    }
+
+    public static FileBackedTaskManager loadFromFile(File file) throws IOException {
+        FileBackedTaskManager fbTaskManager = new FileBackedTaskManager();
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
+            while (fileReader.ready()) {
+                String line = fileReader.readLine();
+                String[] split = line.split(",");
+                String type = split[1];
+                if (type.equals("TASK")) {
+                    fbTaskManager.addToTasks(fbTaskManager.stringToTask(line));
+                } else if (type.equals("EPIC")) {
+                    fbTaskManager.addToEpics((Epic) fbTaskManager.stringToTask(line));
+                } else if (type.equals("SUBTASK")){
+                    fbTaskManager.addToSubtasks((SubTask) fbTaskManager.stringToTask(line));
+                }
+            }
+        } catch (IOException e) {
+            e.getStackTrace();
+        }
+        return fbTaskManager;
+    }
+
     public static void main(String[] args) throws IOException {
         TaskManager fb = new FileBackedTaskManager();
         Task task1 = new Task("Задача 1", "описание задачи 1", fb.getId(), TaskStatus.NEW);
@@ -181,6 +217,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         fb.addToSubtasks(subTask1);
         fb.addToSubtasks(subTask2);
         fb.addToSubtasks(subTask3);
+
+        File savedTaskManager = new File("src/com/koval/kanban/resources/TaskManager.csv");
+        TaskManager fbTaskManager = loadFromFile(savedTaskManager);
+
+        System.out.println(fbTaskManager.getTasks());
+        System.out.println(fbTaskManager.getEpicById(3));
+        System.out.println(fbTaskManager.getHm().getHistory());
+
+        System.out.println(fb.equals(fbTaskManager));
     }
 
 }
