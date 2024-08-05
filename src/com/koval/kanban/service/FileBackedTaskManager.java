@@ -9,9 +9,10 @@ import java.io.*;
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     File autoSave;
 
-    public FileBackedTaskManager(File file){
+    public FileBackedTaskManager(File file) {
         this.autoSave = file;
     }
+
     @Override
     public void addToTasks(Task task) {
         super.addToTasks(task);
@@ -140,7 +141,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     public void save() throws ManagerSaveException {
         try (Writer fileWriter = new FileWriter(autoSave)) {
-            if(tasks.isEmpty() && epics.isEmpty() && subtasks.isEmpty()) {
+            if (tasks.isEmpty() && epics.isEmpty() && subtasks.isEmpty()) {
                 fileWriter.write("");
                 throw new ManagerSaveException("Был сохранен пустой файл.");
             }
@@ -184,7 +185,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
             while (fileReader.ready()) {
                 String line = fileReader.readLine();
-                if(line == null) {
+                if (line == null) {
                     throw new ManagerSaveException("Файл пуст.");
                 }
                 String[] split = line.split(",");
@@ -193,7 +194,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                     fbTaskManager.addToTasks(fbTaskManager.stringToTask(line));
                 } else if (type.equals("EPIC")) {
                     fbTaskManager.addToEpics((Epic) fbTaskManager.stringToTask(line));
-                } else if (type.equals("SUBTASK")){
+                } else if (type.equals("SUBTASK")) {
                     fbTaskManager.addToSubtasks((SubTask) fbTaskManager.stringToTask(line));
                 }
             }
@@ -207,7 +208,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     public static void main(String[] args) throws IOException, ManagerSaveException {
         File dir = new File("src/com/koval/kanban/resources");
-        if(!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdirs();
         }
         File file = new File(dir, "TaskManager.csv");
@@ -234,7 +235,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         fb.addToSubtasks(subTask2);
         fb.addToSubtasks(subTask3);
 
-        try{
+        try {
             FileBackedTaskManager fbTaskManagerFromFile = loadFromFile(file);
             System.out.println("---".repeat(30));
             System.out.println("Задачи сохраненные в файл были загружены в новый менеджер: " +
