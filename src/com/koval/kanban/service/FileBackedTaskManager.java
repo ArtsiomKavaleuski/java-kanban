@@ -14,8 +14,7 @@ import static com.koval.kanban.service.TaskStringConverter.taskToString;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     File autoSave;
-
-    private static final Logger log = Logger.getLogger(FileBackedTaskManager.class.getName());
+    static Logger log = new TaskManagerLogger(FileBackedTaskManager.class.getName()).getLogger();
 
     public FileBackedTaskManager(File file) {
         this.autoSave = file;
@@ -159,7 +158,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             while (fileReader.ready()) {
                 String line = fileReader.readLine();
                 if (line == null) {
-                    throw new ManagerSaveException("Файл пуст.");
+                    throw new ManagerSaveException("Файл пуст или не существует.");
                 }
                 String[] split = line.split(",");
                 String type = split[1];
@@ -172,7 +171,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
             }
         } catch (IOException e) {
-            e.getStackTrace();
+            log.log(Level.SEVERE, "Ошибка: ", e);
+            throw new ManagerSaveException("Файл пуст или не существует.", e);
         } catch (ManagerSaveException e) {
             log.log(Level.SEVERE, "Ошибка: ", e);
             throw new ManagerSaveException("Ошибка записи в файл.", e);
@@ -221,7 +221,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         } catch (ManagerSaveException e) {
             log.log(Level.SEVERE, "Ошибка: ", e);
         }
-
     }
-
 }
