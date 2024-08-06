@@ -65,5 +65,78 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-1.2-api/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-1.2-api/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-api-java9/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-api-java9/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-api-test/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-api-test/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-api/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-appserver/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-cassandra/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-cassandra/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-core-its/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-core-java9/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-core-java9/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-core-test/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-core-test/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-core/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-couchdb/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-docker/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-flume-ng/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-flume-ng/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-iostreams/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-iostreams/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jakarta-smtp/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jakarta-smtp/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jakarta-web/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jakarta-web/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jcl/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jcl/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jdbc-dbcp2/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jdbc-dbcp2/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jpa/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jpa/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jpl/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jpl/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jul/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-jul/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-kubernetes/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-kubernetes/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-layout-template-json-test/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-layout-template-json-test/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-layout-template-json/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-mongodb3/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-mongodb3/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-mongodb4/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-mongodb4/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-osgi-test/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-perf-test/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-slf4j-impl/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-slf4j-impl/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-slf4j2-impl/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-slf4j2-impl/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-spring-boot/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-spring-boot/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-spring-cloud-config-client/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-spring-cloud-config-client/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-taglib/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-taglib/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-to-jul/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-to-jul/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-to-slf4j/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-to-slf4j/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-web/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/apache-log4j-2.23.1-src/log4j-web/src/test/java" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

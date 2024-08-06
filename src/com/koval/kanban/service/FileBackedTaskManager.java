@@ -5,12 +5,17 @@ import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.koval.kanban.service.TaskStringConverter.stringToTask;
 import static com.koval.kanban.service.TaskStringConverter.taskToString;
 
+
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     File autoSave;
+
+    private static final Logger log = Logger.getLogger(FileBackedTaskManager.class.getName());
 
     public FileBackedTaskManager(File file) {
         this.autoSave = file;
@@ -22,7 +27,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -32,7 +37,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -42,7 +47,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -52,7 +57,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -62,7 +67,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -72,7 +77,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -82,7 +87,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -92,7 +97,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -102,7 +107,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -112,7 +117,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -122,7 +127,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try {
             save();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
     }
 
@@ -143,6 +148,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 fileWriter.write(taskToString(subTask) + "\n");
             }
         } catch (IOException e) {
+            log.log(Level.SEVERE, "Ошибка: ", e);
             throw new ManagerSaveException("Ошибка записи в файл.", e);
         }
     }
@@ -168,7 +174,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         } catch (IOException e) {
             e.getStackTrace();
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
+            throw new ManagerSaveException("Ошибка записи в файл.", e);
         }
         return fbTaskManager;
     }
@@ -212,7 +219,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             System.out.println("Подзадачи сохраненные в файл были загружены в новый менеджер: " +
                     fb.getSubTasks().equals(fbTaskManagerFromFile.getSubTasks()));
         } catch (ManagerSaveException e) {
-            e.getMessage();
+            log.log(Level.SEVERE, "Ошибка: ", e);
         }
 
     }
