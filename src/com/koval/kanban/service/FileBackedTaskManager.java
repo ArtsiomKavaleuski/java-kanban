@@ -6,6 +6,9 @@ import com.koval.kanban.model.Task;
 
 import java.io.*;
 
+import static com.koval.kanban.service.TaskStringConverter.stringToTask;
+import static com.koval.kanban.service.TaskStringConverter.taskToString;
+
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     File autoSave;
 
@@ -123,22 +126,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    public <T extends Task> String taskToString(T task) {
-        String taskString;
-        if (task.getClass().equals(SubTask.class)) {
-            taskString = String.format("%d,%s,%s,%s,%s,%d", task.getId(),
-                    TaskTypes.SUBTASK.toString(), task.getName(), task.getStatus(), task.getDescription(),
-                    ((SubTask) task).getEpicId());
-        } else if (task.getClass().equals(Epic.class)) {
-            taskString = String.format("%d,%s,%s,%s,%s,", task.getId(), TaskTypes.EPIC.toString(), task.getName(),
-                    task.getStatus(), task.getDescription());
-        } else {
-            taskString = String.format("%d,%s,%s,%s,%s,", task.getId(), TaskTypes.TASK.toString(), task.getName(),
-                    task.getStatus(), task.getDescription());
-        }
-        return taskString;
-    }
-
     public void save() throws ManagerSaveException {
         try (Writer fileWriter = new FileWriter(autoSave)) {
             if (tasks.isEmpty() && epics.isEmpty() && subtasks.isEmpty()) {
@@ -160,26 +147,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    public Task stringToTask(String value) {
-        Task task;
-        String[] split = value.split(",");
-        int id = Integer.parseInt(split[0]);
-        TaskTypes type = TaskTypes.valueOf(split[1]);
-        String name = split[2];
-        TaskStatus status = TaskStatus.valueOf(split[3]);
-        String description = split[4];
-
-        if (type.equals(TaskTypes.SUBTASK)) {
-            int epicId = Integer.parseInt(split[5]);
-            task = new SubTask(name, description, id, status, epicId);
-        } else if (type.equals(TaskTypes.EPIC)) {
-            task = new Epic(name, description, id);
-        } else {
-            task = new Task(name, description, id, status);
-        }
-        return task;
-    }
-
     public static FileBackedTaskManager loadFromFile(File file) throws IOException, ManagerSaveException {
         FileBackedTaskManager fbTaskManager = new FileBackedTaskManager(file);
         try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
@@ -191,11 +158,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 String[] split = line.split(",");
                 String type = split[1];
                 if (type.equals("TASK")) {
-                    fbTaskManager.addToTasks(fbTaskManager.stringToTask(line));
+                    fbTaskManager.addToTasks(stringToTask(line));
                 } else if (type.equals("EPIC")) {
-                    fbTaskManager.addToEpics((Epic) fbTaskManager.stringToTask(line));
+                    fbTaskManager.addToEpics((Epic) stringToTask(line));
                 } else if (type.equals("SUBTASK")) {
-                    fbTaskManager.addToSubtasks((SubTask) fbTaskManager.stringToTask(line));
+                    fbTaskManager.addToSubtasks((SubTask) stringToTask(line));
                 }
             }
         } catch (IOException e) {
@@ -206,7 +173,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return fbTaskManager;
     }
 
-    public static void main(String[] args) throws IOException, ManagerSaveException {
+    public static void main(String[] args) throws IOException {
         File dir = new File("src/com/koval/kanban/resources");
         if (!dir.exists()) {
             dir.mkdirs();

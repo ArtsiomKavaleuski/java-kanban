@@ -1,10 +1,6 @@
-package com.koval.kanban.test;
+package com.koval.kanban.service;
 
 import com.koval.kanban.model.Task;
-import com.koval.kanban.service.FileBackedTaskManager;
-import com.koval.kanban.service.ManagerSaveException;
-import com.koval.kanban.service.TaskManager;
-import com.koval.kanban.service.TaskStatus;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -14,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.koval.kanban.service.FileBackedTaskManager.loadFromFile;
+import static com.koval.kanban.service.TaskStringConverter.stringToTask;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTaskManagerTest {
@@ -62,7 +59,7 @@ class FileBackedTaskManagerTest {
             while(fileReader.ready()) {
                 String line = fileReader.readLine();
                 if(!line.equals("id,type,name,status,description,epic")) {
-                    tasks.add(fbTaskManager.stringToTask(line));
+                    tasks.add(stringToTask(line));
                 }
             }
             assertEquals(fbTaskManager.getTasks(), tasks);
