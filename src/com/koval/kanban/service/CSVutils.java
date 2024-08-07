@@ -4,7 +4,7 @@ import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
-public class TaskStringConverter {
+public class CSVutils {
     public static Task stringToTask(String value) {
         Task task;
         String[] split = value.split(",");

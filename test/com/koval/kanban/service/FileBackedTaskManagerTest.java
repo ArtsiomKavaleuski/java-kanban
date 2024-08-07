@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.koval.kanban.service.FileBackedTaskManager.loadFromFile;
-import static com.koval.kanban.service.TaskStringConverter.stringToTask;
+import static com.koval.kanban.service.CSVutils.stringToTask;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTaskManagerTest {
