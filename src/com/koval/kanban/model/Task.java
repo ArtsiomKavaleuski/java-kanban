@@ -2,6 +2,8 @@ package com.koval.kanban.model;
 
 import com.koval.kanban.service.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -9,12 +11,16 @@ public class Task {
     protected final String description;
     protected int id;
     protected TaskStatus status;
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
-    public Task(String name, String description, int taskId, TaskStatus status) {
+    public Task(String name, String description, int taskId, TaskStatus status, LocalDateTime startTime, Duration duration) {
         this.name = name;
         this.description = description;
         this.id = taskId;
         this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public String getName() {
@@ -37,12 +43,26 @@ public class Task {
         this.status = status;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.minusMinutes(duration.toMinutes());
+    }
+
     @Override
     public String toString() {
         return "Task{name='" + name +
                 "', description='" + description +
                 "', id='" + id +
-                "', status='" + status + "'}";
+                "', status='" + status +
+                "', startTime='" + startTime.toString() +
+                "', duration='" + duration.toString() + "'}";
     }
 
     @Override

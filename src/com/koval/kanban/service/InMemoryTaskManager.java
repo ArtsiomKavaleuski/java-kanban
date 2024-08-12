@@ -4,6 +4,8 @@ import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -32,7 +34,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtasks.computeIfAbsent(subTask.getId(), k -> subTask);
             epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
         }
-        updateEpicStatus(subTask);
+        updateEpicStatusAndTime(subTask);
     }
 
     @Override
@@ -49,13 +51,27 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
         subtasks.put(subTask.getId(), subTask);
-        updateEpicStatus(subTask);
+        updateEpicStatusAndTime(subTask);
     }
 
-    private void updateEpicStatus(SubTask subTask) {
+    private void updateEpicStatusAndTime(SubTask subTask) {
         int numberOfDoneStatuses = 0;
         int numberOfNewStatuses = 0;
+        LocalDateTime tempStartTime = null;
+        LocalDateTime tempEndTime = null;
+        Duration tempDuration = Duration.ZERO;
         for (int subTaskId : epics.get(subTask.getEpicId()).getSubTaskIds()) {
+            tempStartTime = subtasks.get(subTaskId).getStartTime();
+            tempEndTime = subtasks.get(subTaskId).getEndTime();
+
+            if (subtasks.get(subTaskId).getStartTime().isBefore(tempStartTime)) {
+                tempStartTime = subtasks.get(subTaskId).getStartTime();
+            }
+            if (subtasks.get(subTaskId).getEndTime().isAfter(tempEndTime)) {
+                tempEndTime = subtasks.get(subTaskId).getEndTime();
+            }
+            tempDuration = tempDuration.plus(subtasks.get(subTaskId).getDuration());
+
             if (subtasks.get(subTaskId).getStatus() == TaskStatus.DONE) {
                 numberOfDoneStatuses++;
                 epics.get(subTask.getEpicId()).setStatus(TaskStatus.IN_PROGRESS);
@@ -65,6 +81,10 @@ public class InMemoryTaskManager implements TaskManager {
                 numberOfNewStatuses++;
             }
         }
+        epics.get(subTask.getEpicId()).setStartTime(tempStartTime);
+        epics.get(subTask.getEpicId()).setDuration(tempDuration);
+        epics.get(subTask.getEpicId()).setEndTime(tempEndTime);
+
         if (numberOfDoneStatuses == epics.get(subTask.getEpicId()).getSubTaskIds().size()) {
             epics.get(subTask.getEpicId()).setStatus(TaskStatus.DONE);
         } else if (numberOfNewStatuses == epics.get(subTask.getEpicId()).getSubTaskIds().size()) {
