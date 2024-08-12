@@ -28,7 +28,7 @@ public class SubTask extends Task {
                 "', id='" + super.id +
                 "', status='" + super.status +
                 "', epicId='" + epicId +
-                "', startTime='" + startTime.toString() +
-                "', duration='" + duration.toString() + "'}";
+                "', startTime='" + startTime.format(dateTimeFormatter).toString() +
+                "', duration='" + duration.toMinutes() + "'}";
     }
 }

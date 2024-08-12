@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -16,6 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
     HashMap<Integer, SubTask> subtasks = new HashMap<>();
+    TreeMap<Integer, Task> sortedTasks = new TreeMap<>();
     HistoryManager hm = Managers.getDefaultHistory();
 
     @Override

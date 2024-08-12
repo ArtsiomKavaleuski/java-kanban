@@ -4,6 +4,7 @@ import com.koval.kanban.service.TaskStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -13,6 +14,7 @@ public class Task {
     protected TaskStatus status;
     protected LocalDateTime startTime;
     protected Duration duration;
+    protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
     public Task(String name, String description, int taskId, TaskStatus status, LocalDateTime startTime, Duration duration) {
         this.name = name;
@@ -61,8 +63,8 @@ public class Task {
                 "', description='" + description +
                 "', id='" + id +
                 "', status='" + status +
-                "', startTime='" + startTime.toString() +
-                "', duration='" + duration.toString() + "'}";
+                "', startTime='" + startTime.format(dateTimeFormatter).toString() +
+                "', duration='" + duration.toMinutes() + "'}";
     }
 
     @Override

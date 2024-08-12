@@ -224,6 +224,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         fb.addToSubtasks(subTask2);
         fb.addToSubtasks(subTask3);
 
+        Task testTask = new SubTask("Подзадача Test", "описание подзадачи Test", fb.getId(),
+                TaskStatus.NEW, epic1.getId(),
+                LocalDateTime.of(2024, Month.AUGUST, 17, 10, 0),
+                Duration.ofMinutes(60));
+        System.out.println(testTask);
+
         try {
             FileBackedTaskManager fbTaskManagerFromFile = loadFromFile(file);
             System.out.println("---".repeat(30));
