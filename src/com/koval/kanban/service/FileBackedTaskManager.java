@@ -139,7 +139,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 fileWriter.write("");
                 throw new ManagerSaveException("Был сохранен пустой файл.");
             }
-            fileWriter.write("id,type,name,status,description,epic\n");
+            fileWriter.write("id,type,name,status,description,epic,startTime,duration\n");
             for (Task task : super.getTasks()) {
                 fileWriter.write(taskToString(task) + "\n");
             }
@@ -196,10 +196,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 LocalDateTime.of(2024, Month.AUGUST, 13, 13, 0),
                 Duration.ofMinutes(30));
         Task task2 = new Task("Задача 2", "описание задачи 2", fb.getId(), TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2024, Month.AUGUST, 13, 18, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 15, 13, 0),
                 Duration.ofMinutes(30));
+        Task task3 = new Task("Задача 3", "описание задачи 3", fb.getId(), TaskStatus.IN_PROGRESS,
+                LocalDateTime.of(2024, Month.AUGUST, 13, 17, 0),
+                Duration.ofMinutes(120));
         fb.addToTasks(task1);
         fb.addToTasks(task2);
+        fb.addToTasks(task3);
 
         Epic epic1 = new Epic("Эпик 1", "описание эпика 1", fb.getId());
         Epic epic2 = new Epic("Эпик 2", "описание эпика 2", fb.getId());
@@ -224,11 +228,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         fb.addToSubtasks(subTask2);
         fb.addToSubtasks(subTask3);
 
-        Task testTask = new SubTask("Подзадача Test", "описание подзадачи Test", fb.getId(),
-                TaskStatus.NEW, epic1.getId(),
-                LocalDateTime.of(2024, Month.AUGUST, 17, 10, 0),
+        for (Task task : fb.getPrioritizedTasks()) {
+            System.out.println(task);
+        }
+        System.out.println();
+
+        Task testTask = new SubTask("Подзадача Test", "описание подзадачи Test", 7,
+                TaskStatus.DONE, 3,
+                LocalDateTime.of(2024, Month.AUGUST, 19, 10, 0),
                 Duration.ofMinutes(60));
-        System.out.println(testTask);
+        fb.updateSubTask((SubTask) testTask);
+        //System.out.println(testTask);
+
+        for (Task task : fb.getPrioritizedTasks()) {
+            System.out.println(task);
+        }
+        System.out.println();
 
         try {
             FileBackedTaskManager fbTaskManagerFromFile = loadFromFile(file);

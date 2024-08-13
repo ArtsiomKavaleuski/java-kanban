@@ -6,10 +6,7 @@ import com.koval.kanban.model.Task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -17,17 +14,28 @@ public class InMemoryTaskManager implements TaskManager {
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
     HashMap<Integer, SubTask> subtasks = new HashMap<>();
-    TreeMap<Integer, Task> sortedTasks = new TreeMap<>();
+    TreeSet<Task> sortedTasks = new TreeSet<>(new TaskByDateComparator());
     HistoryManager hm = Managers.getDefaultHistory();
 
     @Override
     public void addToTasks(Task task) {
-        tasks.computeIfAbsent(task.getId(), k -> task);
+        Optional<Boolean> isOverlap = sortedTasks.stream().map(t -> isTasksOverlap(t, task)).findFirst();
+        if (!isOverlap.isPresent()) {
+            tasks.computeIfAbsent(task.getId(), k -> task);
+            addToSortedTasks(task);
+        } else {
+            if(isOverlap.get()) {
+                tasks.computeIfAbsent(task.getId(), k -> task);
+                addToSortedTasks(task);
+            }
+        }
     }
 
     @Override
     public void addToEpics(Epic epic) {
         epics.computeIfAbsent(epic.getId(), k -> epic);
+        addToSortedTasks(epic);
+
     }
 
     @Override
@@ -37,34 +45,42 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
         }
         updateEpicStatusAndTime(subTask);
+        addToSortedTasks(epics.get(subTask.getEpicId()));
+        addToSortedTasks(subTask);
     }
 
     @Override
     public void updateTask(Task task) {
+        sortedTasks.remove(tasks.get(task.getId()));
         tasks.put(task.getId(), task);
+        addToSortedTasks(task);
     }
 
     @Override
     public void updateEpic(Epic epic) {
+        sortedTasks.remove(tasks.get(epic.getId()));
         removeSubTasksByEpic(epic);
         epics.put(epic.getId(), epic);
+        addToSortedTasks(epic);
     }
 
     @Override
     public void updateSubTask(SubTask subTask) {
+        sortedTasks.remove(subtasks.get(subTask.getId()));
+        sortedTasks.remove(epics.get(subTask.getEpicId()));
         subtasks.put(subTask.getId(), subTask);
         updateEpicStatusAndTime(subTask);
+        addToSortedTasks(epics.get(subTask.getEpicId()));
+        addToSortedTasks(subTask);
     }
 
     private void updateEpicStatusAndTime(SubTask subTask) {
         int numberOfDoneStatuses = 0;
         int numberOfNewStatuses = 0;
-        LocalDateTime tempStartTime = null;
-        LocalDateTime tempEndTime = null;
+        LocalDateTime tempStartTime = subTask.getStartTime();
+        LocalDateTime tempEndTime = subTask.getEndTime();
         Duration tempDuration = Duration.ZERO;
         for (int subTaskId : epics.get(subTask.getEpicId()).getSubTaskIds()) {
-            tempStartTime = subtasks.get(subTaskId).getStartTime();
-            tempEndTime = subtasks.get(subTaskId).getEndTime();
 
             if (subtasks.get(subTaskId).getStartTime().isBefore(tempStartTime)) {
                 tempStartTime = subtasks.get(subTaskId).getStartTime();
@@ -200,6 +216,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtasks.clear();
         }
         taskIdCounter = 0;
+        sortedTasks.clear();
     }
 
     @Override
@@ -223,6 +240,43 @@ public class InMemoryTaskManager implements TaskManager {
                 removeTaskById(subTaskId);
                 hm.remove(subTaskId);
             }
+        }
+    }
+
+    public void addToSortedTasks(Task task) {
+        if (task.getStartTime() != null) {
+            sortedTasks.add(task);
+/*
+            if(tasks.containsKey(task.getId())) {
+                sortedTasks.remove(tasks.get(task.getId()));
+                sortedTasks.add(task);
+            } else if(epics.containsKey(task.getId())) {
+                sortedTasks.remove(epics.get(task.getId()));
+                sortedTasks.add(task);
+            } else if(subtasks.containsKey(task.getId())) {
+                sortedTasks.remove(subtasks.get(task.getId()));
+                sortedTasks.add(task);
+            }
+*/
+        }
+    }
+
+    public void updateSortedTasks(Task task) {
+        if (task.getStartTime() != null) {
+            sortedTasks.add(task);
+        }
+    }
+
+    @Override
+    public TreeSet<Task> getPrioritizedTasks() {
+        return sortedTasks;
+    }
+
+    public boolean isTasksOverlap(Task task1, Task task2) {
+        if (task1.getStartTime().isBefore(task2.getStartTime())) {
+            return task1.getEndTime().isBefore(task2.getStartTime());
+        } else {
+            return task2.getEndTime().isBefore(task1.getStartTime());
         }
     }
 

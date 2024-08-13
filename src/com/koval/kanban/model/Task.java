@@ -67,18 +67,25 @@ public class Task {
                 "', duration='" + duration.toMinutes() + "'}";
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description,
-                task.description) && status == task.status;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status && Objects.equals(startTime, task.startTime) && Objects.equals(duration, task.duration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, status);
+        int result = Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(description);
+        result = 31 * result + id;
+        result = 31 * result + Objects.hashCode(status);
+        result = 31 * result + Objects.hashCode(startTime);
+        result = 31 * result + Objects.hashCode(duration);
+        return result;
     }
 }
 

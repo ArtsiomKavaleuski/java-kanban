@@ -5,6 +5,7 @@ import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -48,5 +49,5 @@ public interface TaskManager {
 
     HistoryManager getHm();
 
-
+    TreeSet<Task> getPrioritizedTasks();
 }
