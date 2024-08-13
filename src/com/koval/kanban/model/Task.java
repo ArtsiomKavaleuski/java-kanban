@@ -67,14 +67,13 @@ public class Task {
                 "', duration='" + duration.toMinutes() + "'}";
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status && Objects.equals(startTime, task.startTime) && Objects.equals(duration, task.duration);
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description,
+                task.description) && status == task.status;
     }
 
     @Override

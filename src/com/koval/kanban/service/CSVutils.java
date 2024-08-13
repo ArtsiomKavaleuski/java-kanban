@@ -3,6 +3,7 @@ package com.koval.kanban.service;
 import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
+import com.koval.kanban.model.TaskTypes;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

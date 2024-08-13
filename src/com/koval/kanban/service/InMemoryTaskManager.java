@@ -19,12 +19,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addToTasks(Task task) {
-        Optional<Boolean> isOverlap = sortedTasks.stream().map(t -> isTasksOverlap(t, task)).findFirst();
+        Optional<Boolean> isOverlap = sortedTasks.stream().filter(t -> !t.getClass().equals(Epic.class))
+                .map(t -> isTasksOverlap(t, task)).findFirst();
         if (!isOverlap.isPresent()) {
             tasks.computeIfAbsent(task.getId(), k -> task);
             addToSortedTasks(task);
         } else {
-            if(isOverlap.get()) {
+            if (isOverlap.get()) {
                 tasks.computeIfAbsent(task.getId(), k -> task);
                 addToSortedTasks(task);
             }
@@ -272,11 +273,17 @@ public class InMemoryTaskManager implements TaskManager {
         return sortedTasks;
     }
 
-    public boolean isTasksOverlap(Task task1, Task task2) {
-        if (task1.getStartTime().isBefore(task2.getStartTime())) {
-            return task1.getEndTime().isBefore(task2.getStartTime());
+    @Override
+    public <T extends Task> boolean isTasksOverlap(T task1, Task task2) {
+        if(task1.getStartTime().isBefore(task2.getStartTime())) {
+            return task1.getEndTime().isAfter(task2.getStartTime());
+
+        } else if (task1.getStartTime().equals(task2.getStartTime())) {
+            return false;
+        } else if (task1.getStartTime().isBefore(task2.getEndTime())) {
+            return false;
         } else {
-            return task2.getEndTime().isBefore(task1.getStartTime());
+            return true;
         }
     }
 

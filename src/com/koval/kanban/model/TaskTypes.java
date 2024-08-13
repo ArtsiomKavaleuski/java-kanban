@@ -1,6 +1,6 @@
 package com.koval.kanban.model;
 
-public enum TaskType {
+public enum TaskTypes {
     TASK,
     EPIC,
     SUBTASK

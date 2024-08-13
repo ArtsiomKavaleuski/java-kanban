@@ -50,4 +50,6 @@ public interface TaskManager {
     HistoryManager getHm();
 
     TreeSet<Task> getPrioritizedTasks();
+
+    <T extends Task> boolean isTasksOverlap(T task1, Task task2);
 }

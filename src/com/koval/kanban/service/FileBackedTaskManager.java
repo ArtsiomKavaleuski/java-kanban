@@ -194,12 +194,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
         Task task1 = new Task("Задача 1", "описание задачи 1", fb.getId(), TaskStatus.NEW,
                 LocalDateTime.of(2024, Month.AUGUST, 13, 13, 0),
-                Duration.ofMinutes(30));
+                Duration.ofMinutes(300));
         Task task2 = new Task("Задача 2", "описание задачи 2", fb.getId(), TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2024, Month.AUGUST, 15, 13, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 12, 13, 0),
                 Duration.ofMinutes(30));
         Task task3 = new Task("Задача 3", "описание задачи 3", fb.getId(), TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2024, Month.AUGUST, 13, 17, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 14, 17, 0),
                 Duration.ofMinutes(120));
         fb.addToTasks(task1);
         fb.addToTasks(task2);
@@ -218,15 +218,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
         SubTask subTask2 = new SubTask("Подзадача 2", "описание подзадачи 2", fb.getId(),
                 TaskStatus.NEW, epic1.getId(),
-                LocalDateTime.of(2024, Month.AUGUST, 15, 13, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 15, 13, 30),
                 Duration.ofMinutes(30));
         SubTask subTask3 = new SubTask("Подзадача 3", "описание подзадачи 3", fb.getId(),
                 TaskStatus.NEW, epic1.getId(),
                 LocalDateTime.of(2024, Month.AUGUST, 15, 10, 0),
-                Duration.ofMinutes(60));
+                Duration.ofMinutes(240));
         fb.addToSubtasks(subTask1);
         fb.addToSubtasks(subTask2);
         fb.addToSubtasks(subTask3);
+
+
+
+        System.out.println("\n" + fb.isTasksOverlap(subTask2, subTask3));
 
         for (Task task : fb.getPrioritizedTasks()) {
             System.out.println(task);
