@@ -4,8 +4,6 @@ import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -56,4 +54,5 @@ public interface TaskManager {
     TreeSet<Task> getPrioritizedTasks();
 
     <T extends Task> boolean isTasksOverlap(T task1, T task2);
+
 }

@@ -243,7 +243,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeSubTasksByEpic(Epic epic) {
         if (epics.get(epic.getId()).getSubTaskIds() != null) {
             CopyOnWriteArrayList<Integer> tempSubTasksList = new CopyOnWriteArrayList<>(epics.get(epic.getId()).getSubTaskIds());
-            tempSubTasksList.stream().forEach(i -> {removeTaskById(i); hm.remove(i);});
+            tempSubTasksList.stream().forEach(i -> {
+                removeTaskById(i);
+                hm.remove(i);
+            });
         }
     }
 
@@ -270,7 +273,6 @@ public class InMemoryTaskManager implements TaskManager {
             return true;
         }
     }
-
 
     @Override
     public boolean equals(Object o) {

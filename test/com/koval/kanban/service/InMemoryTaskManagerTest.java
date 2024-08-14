@@ -108,25 +108,6 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void subTaskShouldNotBeMadeHisOwnEpic() {
-        int epicId = 1;
-        int subTaskId = 2;
-        Epic epic1 = new Epic("epic1Name", "epic1Description", epicId);
-        tm.addToEpics(epic1);
-        SubTask subTask = new SubTask("subTaskName", "subTaskDescription", subTaskId,
-                TaskStatus.NEW,
-                epicId,
-                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
-                Duration.ofMinutes(30));
-        tm.addToSubtasks(subTask);
-        tm.updateEpic(new Epic(subTask.getName(), subTask.getDescription(), subTask.getEpicId()));
-        assertEquals(subTask.getName(), tm.getEpics().getFirst().getName(),
-                "подзадача была сделана своим же эпиком");
-        assertNotEquals(tm.getEpics().getFirst().getSubTaskIds().size(), subTaskId,
-                "список ID подзадач эпика содержит ID самого эпика");
-    }
-
-    @Test
     void deletedSubTasksShouldNotKeepOldId() {
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
         SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW,

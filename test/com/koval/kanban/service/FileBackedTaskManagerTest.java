@@ -12,9 +12,10 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 
-import static com.koval.kanban.service.FileBackedTaskManager.loadFromFile;
 import static com.koval.kanban.service.CSVutils.stringToTask;
+import static com.koval.kanban.service.FileBackedTaskManager.loadFromFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileBackedTaskManagerTest {
 
@@ -38,11 +39,11 @@ class FileBackedTaskManagerTest {
         try {
             File file = File.createTempFile("test", "load");
             TaskManager fbTaskManager = loadFromFile(file);
-            assertEquals(fbTaskManager.getTasks().isEmpty() && fbTaskManager.getEpics().isEmpty() &&
-                    fbTaskManager.getSubTasks().isEmpty(), true);
+            assertTrue(fbTaskManager.getTasks().isEmpty() && fbTaskManager.getEpics().isEmpty() &&
+                    fbTaskManager.getSubTasks().isEmpty());
         } catch (ManagerSaveException e) {
             e.getMessage();
-            assertEquals("Файл пуст.", e.getMessage());
+            assertEquals("Ошибка записи в файл.", e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         }

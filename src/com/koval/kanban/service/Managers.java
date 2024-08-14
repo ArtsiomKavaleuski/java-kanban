@@ -4,17 +4,14 @@ import java.io.File;
 
 public class Managers {
     public static TaskManager getDefault() {
-        TaskManager tm = new InMemoryTaskManager();
-        return tm;
+        return new InMemoryTaskManager();
     }
 
     public static TaskManager getFileBackTaskManager(File file) {
-        TaskManager fbTaskManager = new FileBackedTaskManager(file);
-        return fbTaskManager;
+        return new FileBackedTaskManager(file);
     }
 
     public static HistoryManager getDefaultHistory() {
-        HistoryManager hm = new InMemoryHistoryManager();
-        return hm;
+        return new InMemoryHistoryManager();
     }
 }

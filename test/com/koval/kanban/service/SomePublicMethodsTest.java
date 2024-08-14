@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 
+import static com.koval.kanban.service.FileBackedTaskManager.loadFromFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -117,13 +118,13 @@ public class SomePublicMethodsTest {
     public void shouldRemoveFromHistoryTaskInTheMiddleThatWasRemovedButSaveTheOrder() {
         TaskManager tm = Managers.getDefault();
         Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 14,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
                 Duration.ofMinutes(30));
         Task task2 = new Task("task2", "task1description", 1, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 15,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
                 Duration.ofMinutes(30));
         Task task3 = new Task("task3", "task1description", 2, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 16,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 16, 15, 0),
                 Duration.ofMinutes(30));
         tm.addToTasks(task1);
         tm.addToTasks(task2);
@@ -142,13 +143,13 @@ public class SomePublicMethodsTest {
     public void shouldRemoveFromHistoryTaskInTheBeginningThatWasRemovedButSaveTheOrder() {
         TaskManager tm = Managers.getDefault();
         Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 14,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
                 Duration.ofMinutes(30));
         Task task2 = new Task("task2", "task1description", 1, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 15,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
                 Duration.ofMinutes(30));
         Task task3 = new Task("task3", "task1description", 2, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 16,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 16, 15, 0),
                 Duration.ofMinutes(30));
         tm.addToTasks(task1);
         tm.addToTasks(task2);
@@ -167,13 +168,13 @@ public class SomePublicMethodsTest {
     public void shouldRemoveFromHistoryTaskInTheEndThatWasRemovedButSaveTheOrder() {
         TaskManager tm = Managers.getDefault();
         Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 14,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
                 Duration.ofMinutes(30));
         Task task2 = new Task("task2", "task1description", 1, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 15,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
                 Duration.ofMinutes(30));
         Task task3 = new Task("task3", "task1description", 2, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 16,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 16, 15, 0),
                 Duration.ofMinutes(30));
         tm.addToTasks(task1);
         tm.addToTasks(task2);
@@ -196,20 +197,18 @@ public class SomePublicMethodsTest {
         TaskManager fb = new FileBackedTaskManager(file);
         Assertions.assertThrows(ManagerSaveException.class, fb::save);
         Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 14,15,0),
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
                 Duration.ofMinutes(30));
         fb.addToTasks(task1);
         Assertions.assertDoesNotThrow(fb::save);
     }
 
     @Test
-    void shouldThrowAnExceptionWhenLoad() {
-        File dir = new File("src/com/koval/kanban/resources");
-        File file = new File(dir, "TaskManagerTest.csv");
-
-        TaskManager fb = new FileBackedTaskManager(file);
-        Assertions.assertThrows(ManagerSaveException.class, () -> {TaskManager fb1 = new FileBackedTaskManager(file);});
-        Assertions.assertDoesNotThrow(fb::getEpics);
+    void shouldThrowAnExceptionWhenLoadEmptyFile() {
+        Assertions.assertThrows(ManagerSaveException.class, () -> {
+            File file = File.createTempFile("test", "load");
+            TaskManager fbTaskManager = loadFromFile(file);
+        });
     }
 
 }

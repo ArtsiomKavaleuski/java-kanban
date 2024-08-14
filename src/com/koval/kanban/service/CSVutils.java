@@ -38,13 +38,13 @@ public class CSVutils {
         String taskString;
         if (task.getClass().equals(SubTask.class)) {
             taskString = String.format("%d,%s,%s,%s,%s,%d,%s,%d", task.getId(),
-                    TaskTypes.SUBTASK.toString(), task.getName(), task.getStatus(), task.getDescription(),
+                    TaskTypes.SUBTASK, task.getName(), task.getStatus(), task.getDescription(),
                     ((SubTask) task).getEpicId(), task.getStartTime(), task.getDuration().toMinutes());
         } else if (task.getClass().equals(Epic.class)) {
-            taskString = String.format("%d,%s,%s,%s,%s,,%s,%d", task.getId(), TaskTypes.EPIC.toString(), task.getName(),
+            taskString = String.format("%d,%s,%s,%s,%s,,%s,%d", task.getId(), TaskTypes.EPIC, task.getName(),
                     task.getStatus(), task.getDescription(), task.getStartTime(), task.getDuration().toMinutes());
         } else {
-            taskString = String.format("%d,%s,%s,%s,%s,,%s,%d", task.getId(), TaskTypes.TASK.toString(), task.getName(),
+            taskString = String.format("%d,%s,%s,%s,%s,,%s,%d", task.getId(), TaskTypes.TASK, task.getName(),
                     task.getStatus(), task.getDescription(), task.getStartTime(), task.getDuration().toMinutes());
         }
         return taskString;

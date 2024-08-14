@@ -63,7 +63,7 @@ public class Task {
                 "', description='" + description +
                 "', id='" + id +
                 "', status='" + status +
-                "', startTime='" + startTime.format(dateTimeFormatter).toString() +
+                "', startTime='" + startTime.format(dateTimeFormatter) +
                 "', duration='" + duration.toMinutes() + "'}";
     }
 

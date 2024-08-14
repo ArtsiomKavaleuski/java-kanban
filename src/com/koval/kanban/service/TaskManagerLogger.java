@@ -11,7 +11,7 @@ public class TaskManagerLogger {
     private static Logger log;
 
     public TaskManagerLogger(String className) {
-        log = Logger.getLogger(FileBackedTaskManager.class.getName());
+        log = Logger.getLogger(className);
         try {
             File dir = new File("src/com/koval/kanban/log");
             if (!dir.exists()) {
