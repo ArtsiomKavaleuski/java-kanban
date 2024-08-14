@@ -6,8 +6,11 @@ import com.koval.kanban.model.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     TaskManager tm = Managers.getDefault();
@@ -19,20 +22,20 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldAddNewTaskToTasks() {
-        Task task1 = new Task("task1Name", "task1Description", tm.getId(), TaskStatus.NEW);
+        Task task1 = new Task("task1Name", "task1Description", tm.getId(), TaskStatus.NEW,
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                Duration.ofMinutes(30));
         tm.addToTasks(task1);
-        Task taskExpected = task1;
         Task taskActual = tm.getTaskById(task1.getId());
-        assertEquals(taskExpected, taskActual, "разные задачи");
+        assertEquals(task1, taskActual, "разные задачи");
     }
 
     @Test
     void shouldAddNewEpicToEpics() {
         Epic epic1 = new Epic("epic1Name", "epic1Description", tm.getId());
         tm.addToEpics(epic1);
-        Epic epicExpected = epic1;
         Epic epicActual = tm.getEpicById(epic1.getId());
-        assertEquals(epicExpected, epicActual, "разные эпики");
+        assertEquals(epic1, epicActual, "разные эпики");
     }
 
     @Test
@@ -40,19 +43,25 @@ class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("epic1Name", "epic1Description", tm.getId());
         tm.addToEpics(epic1);
         SubTask subTask1 = new SubTask("subTask1Name", "subTask1Description", tm.getId(),
-                TaskStatus.NEW, epic1.getId());
+                TaskStatus.NEW,
+                epic1.getId(),
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                Duration.ofMinutes(30));
         tm.addToSubtasks(subTask1);
-        SubTask subTaskExpected = subTask1;
         SubTask subTaskActual = tm.getSubTaskById(subTask1.getId());
-        assertEquals(subTaskExpected, subTaskActual, "разные подзадачи");
+        assertEquals(subTask1, subTaskActual, "разные подзадачи");
     }
 
     @Test
     void tasksWithGeneratedAndEnteredIdShouldNotHaveConflict() {
         int enteredSecondId = 1;
         int firstIdExpected = 0;
-        Task task1 = new Task("task1Name", "task1Description", tm.getId(), TaskStatus.NEW);
-        Task task2 = new Task("task2Name", "task2Description", enteredSecondId, TaskStatus.NEW);
+        Task task1 = new Task("task1Name", "task1Description", tm.getId(), TaskStatus.NEW,
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                Duration.ofMinutes(30));
+        Task task2 = new Task("task2Name", "task2Description", enteredSecondId, TaskStatus.NEW,
+                LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
+                Duration.ofMinutes(30));
         tm.addToTasks(task1);
         tm.addToTasks(task2);
         int firstIdActual = tm.getTasks().getFirst().getId();
@@ -67,8 +76,10 @@ class InMemoryTaskManagerTest {
         String description = "task1Description";
         int taskId = 1;
         TaskStatus taskStatus = TaskStatus.NEW;
+        LocalDateTime dateTime = LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0);
+        Duration duration = Duration.ofMinutes(30);
 
-        Task task1 = new Task(name, description, taskId, taskStatus);
+        Task task1 = new Task(name, description, taskId, taskStatus, dateTime, duration);
         tm.addToTasks(task1);
 
         String nameActual = tm.getTasks().getFirst().getName();
@@ -88,7 +99,10 @@ class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("epic1Name", "epic1Description", epicId);
         tm.addToEpics(epic1);
         SubTask subTask = new SubTask("subTaskName", "subTaskDescription", epicId,
-                TaskStatus.NEW, epicId);
+                TaskStatus.NEW,
+                epicId,
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                Duration.ofMinutes(30));
         tm.addToSubtasks(subTask);
         assertEquals(tm.getEpicById(1).getSubTaskIds().size(), 0, "эпик был добавлен к себе в подзадачу");
     }
@@ -100,7 +114,10 @@ class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("epic1Name", "epic1Description", epicId);
         tm.addToEpics(epic1);
         SubTask subTask = new SubTask("subTaskName", "subTaskDescription", subTaskId,
-                TaskStatus.NEW, epicId);
+                TaskStatus.NEW,
+                epicId,
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                Duration.ofMinutes(30));
         tm.addToSubtasks(subTask);
         tm.updateEpic(new Epic(subTask.getName(), subTask.getDescription(), subTask.getEpicId()));
         assertEquals(subTask.getName(), tm.getEpics().getFirst().getName(),
@@ -112,8 +129,14 @@ class InMemoryTaskManagerTest {
     @Test
     void deletedSubTasksShouldNotKeepOldId() {
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
-        SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW, 0);
-        SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW, 0);
+        SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW,
+                0,
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                Duration.ofMinutes(30));
+        SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW,
+                0,
+                LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
+                Duration.ofMinutes(30));
         tm.addToEpics(epic1);
         tm.addToSubtasks(subTask1);
         tm.addToSubtasks(subTask2);
@@ -125,12 +148,20 @@ class InMemoryTaskManagerTest {
     @Test
     void epicShouldNotKeepIdsOfDDeletedSubTasks() {
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
-        SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW, 0);
-        SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW, 0);
+        SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW,
+                0,
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                Duration.ofMinutes(30));
+        SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW,
+                0,
+                LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
+                Duration.ofMinutes(30));
         tm.addToEpics(epic1);
         tm.addToSubtasks(subTask1);
         tm.addToSubtasks(subTask2);
         tm.removeTaskById(subTask2.getId());
-        assertEquals(tm.getEpicById(0).getSubTaskIds().contains(subTask2.getId()), false, "в эпике храанится id удаленной подзаадачи");
+        assertFalse(tm.getEpicById(0).getSubTaskIds().contains(subTask2.getId()), "в эпике храанится id удаленной подзаадачи");
     }
+
+
 }

@@ -4,6 +4,8 @@ import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -48,6 +50,8 @@ public interface TaskManager {
     int getId();
 
     HistoryManager getHm();
+
+    void save() throws ManagerSaveException;
 
     TreeSet<Task> getPrioritizedTasks();
 

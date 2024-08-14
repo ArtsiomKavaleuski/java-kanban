@@ -155,12 +155,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) throws IOException, ManagerSaveException {
+    public static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
         FileBackedTaskManager fbTaskManager = new FileBackedTaskManager(file);
         try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
             while (fileReader.ready()) {
                 String line = fileReader.readLine();
-                if (line == null) {
+                if (line.isEmpty()) {
                     throw new ManagerSaveException("Файл пуст или не существует.");
                 }
                 String[] split = line.split(",");
@@ -176,10 +176,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         } catch (IOException e) {
             log.log(Level.SEVERE, "Ошибка: ", e);
             throw new ManagerSaveException("Файл пуст или не существует.", e);
-        } catch (ManagerSaveException e) {
+        } /*catch (ManagerSaveException e) {
             log.log(Level.SEVERE, "Ошибка: ", e);
             throw new ManagerSaveException("Ошибка записи в файл.", e);
-        }
+        }*/
         return fbTaskManager;
     }
 
@@ -190,13 +190,45 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
         File file = new File(dir, "TaskManager.csv");
 
+        TaskManager fb = getFb(file);
+
+        for (Task task : fb.getPrioritizedTasks()) {
+            System.out.println(task);
+        }
+        System.out.println();
+
+        Task testTask = new SubTask("Подзадача Test", "описание подзадачи Test", 7,
+                TaskStatus.DONE, 3,
+                LocalDateTime.of(2024, Month.AUGUST, 19, 11, 10),
+                Duration.ofMinutes(60));
+        fb.updateSubTask((SubTask) testTask);
+
+        for (Task task : fb.getPrioritizedTasks()) {
+            System.out.println(task);
+        }
+
+        try {
+            FileBackedTaskManager fbTaskManagerFromFile = loadFromFile(file);
+            System.out.println("---".repeat(30));
+            System.out.println("Задачи сохраненные в файл были загружены в новый менеджер: " +
+                    fb.getTasks().equals(fbTaskManagerFromFile.getTasks()));
+            System.out.println("Эпики сохраненные в файл были загружены в новый менеджер: " +
+                    fb.getEpics().equals(fbTaskManagerFromFile.getEpics()));
+            System.out.println("Подзадачи сохраненные в файл были загружены в новый менеджер: " +
+                    fb.getSubTasks().equals(fbTaskManagerFromFile.getSubTasks()));
+        } catch (ManagerSaveException e) {
+            log.log(Level.SEVERE, "Ошибка: ", e);
+        }
+    }
+
+    private static TaskManager getFb(File file) {
         TaskManager fb = new FileBackedTaskManager(file);
 
         Task task1 = new Task("Задача 1", "описание задачи 1", fb.getId(), TaskStatus.NEW,
                 LocalDateTime.of(2024, Month.AUGUST, 13, 13, 0),
-                Duration.ofMinutes(300));
+                Duration.ofMinutes(60));
         Task task2 = new Task("Задача 2", "описание задачи 2", fb.getId(), TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2024, Month.AUGUST, 13, 14, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 13, 14, 30),
                 Duration.ofMinutes(30));
         Task task3 = new Task("Задача 3", "описание задачи 3", fb.getId(), TaskStatus.IN_PROGRESS,
                 LocalDateTime.of(2024, Month.AUGUST, 19, 9, 0),
@@ -227,52 +259,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         fb.addToSubtasks(subTask1);
         fb.addToSubtasks(subTask2);
         fb.addToSubtasks(subTask3);
-
-
-
-        System.out.println("\n" + fb.isTasksOverlap(subTask2, subTask3));
-        System.out.println( subTask2.getStartTime().equals(subTask3.getStartTime()) + "\n" +
-                subTask2.getStartTime().isBefore(subTask3.getStartTime()) + "\n" +
-                subTask2.getEndTime().isBefore(subTask3.getStartTime()) + "\n" +
-                subTask2.getStartTime().isAfter(subTask3.getStartTime()) + "\n" +
-                subTask2.getStartTime().isAfter(subTask3.getEndTime()));
-
-
-        for (Task task : fb.getPrioritizedTasks()) {
-            System.out.println(task);
-        }
-        System.out.println();
-
-        Task testTask = new SubTask("Подзадача Test", "описание подзадачи Test", 7,
-                TaskStatus.DONE, 3,
-                LocalDateTime.of(2024, Month.AUGUST, 19, 12, 0),
-                Duration.ofMinutes(60));
-        fb.updateSubTask((SubTask) testTask);
-        //System.out.println(testTask);
-
-        for (Task task : fb.getPrioritizedTasks()) {
-            System.out.println(task);
-        }
-        System.out.println();
-
-        System.out.println("\n" + fb.isTasksOverlap(task3, testTask));
-        System.out.println( subTask2.getStartTime().equals(subTask3.getStartTime()) + "\n" +
-                subTask2.getStartTime().isBefore(subTask3.getStartTime()) + "\n" +
-                subTask2.getEndTime().isBefore(subTask3.getStartTime()) + "\n" +
-                subTask2.getStartTime().isAfter(subTask3.getStartTime()) + "\n" +
-                subTask2.getStartTime().isAfter(subTask3.getEndTime()));
-
-        try {
-            FileBackedTaskManager fbTaskManagerFromFile = loadFromFile(file);
-            System.out.println("---".repeat(30));
-            System.out.println("Задачи сохраненные в файл были загружены в новый менеджер: " +
-                    fb.getTasks().equals(fbTaskManagerFromFile.getTasks()));
-            System.out.println("Эпики сохраненные в файл были загружены в новый менеджер: " +
-                    fb.getEpics().equals(fbTaskManagerFromFile.getEpics()));
-            System.out.println("Подзадачи сохраненные в файл были загружены в новый менеджер: " +
-                    fb.getSubTasks().equals(fbTaskManagerFromFile.getSubTasks()));
-        } catch (ManagerSaveException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
-        }
+        return fb;
     }
 }

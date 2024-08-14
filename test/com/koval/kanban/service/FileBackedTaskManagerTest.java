@@ -7,6 +7,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 
 import static com.koval.kanban.service.FileBackedTaskManager.loadFromFile;
@@ -50,15 +53,21 @@ class FileBackedTaskManagerTest {
         try {
             File file = File.createTempFile("test", "save");
             FileBackedTaskManager fbTaskManager = new FileBackedTaskManager(file);
-            Task task1 = new Task("Задача 1", "описание задачи 1", fbTaskManager.getId(), TaskStatus.NEW);
-            Task task2 = new Task("Задача 2", "описание задачи 2", fbTaskManager.getId(), TaskStatus.IN_PROGRESS);
+            Task task1 = new Task("Задача 1", "описание задачи 1", fbTaskManager.getId(),
+                    TaskStatus.NEW,
+                    LocalDateTime.of(2024, Month.AUGUST, 14,15,0),
+                    Duration.ofMinutes(30));
+            Task task2 = new Task("Задача 2", "описание задачи 2", fbTaskManager.getId(),
+                    TaskStatus.IN_PROGRESS,
+                    LocalDateTime.of(2024, Month.AUGUST, 15,15,0),
+                    Duration.ofMinutes(30));
             fbTaskManager.addToTasks(task1);
             fbTaskManager.addToTasks(task2);
             BufferedReader fileReader = new BufferedReader(new FileReader(file));
             ArrayList<Task> tasks = new ArrayList<>();
             while(fileReader.ready()) {
                 String line = fileReader.readLine();
-                if(!line.equals("id,type,name,status,description,epic")) {
+                if(!line.equals("id,type,name,status,description,epic,startTime,duration")) {
                     tasks.add(stringToTask(line));
                 }
             }
@@ -74,8 +83,14 @@ class FileBackedTaskManagerTest {
         try {
             File file1 = File.createTempFile("test", "save");
             FileBackedTaskManager fbTaskManager = new FileBackedTaskManager(file1);
-            Task task1 = new Task("Задача 1", "описание задачи 1", fbTaskManager.getId(), TaskStatus.NEW);
-            Task task2 = new Task("Задача 2", "описание задачи 2", fbTaskManager.getId(), TaskStatus.IN_PROGRESS);
+            Task task1 = new Task("Задача 1", "описание задачи 1", fbTaskManager.getId(),
+                    TaskStatus.NEW,
+                    LocalDateTime.of(2024, Month.AUGUST, 14,15,0),
+                    Duration.ofMinutes(30));
+            Task task2 = new Task("Задача 2", "описание задачи 2", fbTaskManager.getId(),
+                    TaskStatus.IN_PROGRESS,
+                    LocalDateTime.of(2024, Month.AUGUST, 15,15,0),
+                    Duration.ofMinutes(30));
             fbTaskManager.addToTasks(task1);
             fbTaskManager.addToTasks(task2);
             FileBackedTaskManager loadFromFileTaskManager = loadFromFile(file1);
