@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -191,16 +192,19 @@ public class SomePublicMethodsTest {
 
     @Test
     void shouldThrowAnExceptionWhenSave() {
-        File dir = new File("src/com/koval/kanban/resources");
-        File file = new File(dir, "TaskManagerTest.csv");
 
-        TaskManager fb = new FileBackedTaskManager(file);
-        Assertions.assertThrows(ManagerSaveException.class, fb::save);
-        Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
-                Duration.ofMinutes(30));
-        fb.addToTasks(task1);
-        Assertions.assertDoesNotThrow(fb::save);
+        try {
+            File file = File.createTempFile("test", "load");
+            TaskManager fb = new FileBackedTaskManager(file);
+            Assertions.assertThrows(ManagerSaveException.class, fb::save);
+            Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
+                    LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                    Duration.ofMinutes(30));
+            fb.addToTasks(task1);
+            Assertions.assertDoesNotThrow(fb::save);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
