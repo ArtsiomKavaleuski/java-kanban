@@ -51,5 +51,5 @@ public interface TaskManager {
 
     TreeSet<Task> getPrioritizedTasks();
 
-    <T extends Task> boolean isTasksOverlap(T task1, Task task2);
+    <T extends Task> boolean isTasksOverlap(T task1, T task2);
 }

@@ -196,10 +196,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 LocalDateTime.of(2024, Month.AUGUST, 13, 13, 0),
                 Duration.ofMinutes(300));
         Task task2 = new Task("Задача 2", "описание задачи 2", fb.getId(), TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2024, Month.AUGUST, 12, 13, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 13, 14, 0),
                 Duration.ofMinutes(30));
         Task task3 = new Task("Задача 3", "описание задачи 3", fb.getId(), TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2024, Month.AUGUST, 14, 17, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 19, 9, 0),
                 Duration.ofMinutes(120));
         fb.addToTasks(task1);
         fb.addToTasks(task2);
@@ -222,7 +222,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 Duration.ofMinutes(30));
         SubTask subTask3 = new SubTask("Подзадача 3", "описание подзадачи 3", fb.getId(),
                 TaskStatus.NEW, epic1.getId(),
-                LocalDateTime.of(2024, Month.AUGUST, 15, 10, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 15, 9, 0),
                 Duration.ofMinutes(240));
         fb.addToSubtasks(subTask1);
         fb.addToSubtasks(subTask2);
@@ -231,6 +231,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
 
         System.out.println("\n" + fb.isTasksOverlap(subTask2, subTask3));
+        System.out.println( subTask2.getStartTime().equals(subTask3.getStartTime()) + "\n" +
+                subTask2.getStartTime().isBefore(subTask3.getStartTime()) + "\n" +
+                subTask2.getEndTime().isBefore(subTask3.getStartTime()) + "\n" +
+                subTask2.getStartTime().isAfter(subTask3.getStartTime()) + "\n" +
+                subTask2.getStartTime().isAfter(subTask3.getEndTime()));
+
 
         for (Task task : fb.getPrioritizedTasks()) {
             System.out.println(task);
@@ -239,7 +245,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
         Task testTask = new SubTask("Подзадача Test", "описание подзадачи Test", 7,
                 TaskStatus.DONE, 3,
-                LocalDateTime.of(2024, Month.AUGUST, 19, 10, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 19, 12, 0),
                 Duration.ofMinutes(60));
         fb.updateSubTask((SubTask) testTask);
         //System.out.println(testTask);
@@ -248,6 +254,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             System.out.println(task);
         }
         System.out.println();
+
+        System.out.println("\n" + fb.isTasksOverlap(task3, testTask));
+        System.out.println( subTask2.getStartTime().equals(subTask3.getStartTime()) + "\n" +
+                subTask2.getStartTime().isBefore(subTask3.getStartTime()) + "\n" +
+                subTask2.getEndTime().isBefore(subTask3.getStartTime()) + "\n" +
+                subTask2.getStartTime().isAfter(subTask3.getStartTime()) + "\n" +
+                subTask2.getStartTime().isAfter(subTask3.getEndTime()));
 
         try {
             FileBackedTaskManager fbTaskManagerFromFile = loadFromFile(file);
