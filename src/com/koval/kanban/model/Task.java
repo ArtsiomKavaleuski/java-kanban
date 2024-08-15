@@ -54,16 +54,17 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(duration.toMinutes());
+        return startTime == null ? null : startTime.plusMinutes(duration.toMinutes());
     }
 
     @Override
     public String toString() {
+        String formatedDateTime = startTime == null ? null : startTime.format(dateTimeFormatter);
         return "Task{name='" + name +
                 "', description='" + description +
                 "', id='" + id +
                 "', status='" + status +
-                "', startTime='" + startTime.format(dateTimeFormatter) +
+                "', startTime='" + formatedDateTime +
                 "', duration='" + duration.toMinutes() + "'}";
     }
 

@@ -45,12 +45,13 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
+        String formatedDateTime = startTime == null ? null : startTime.format(dateTimeFormatter);
         return "Epic{name='" + super.name +
                 "', description='" + super.description +
                 "', id='" + super.id +
                 "', status='" + super.status +
                 "', subTaskIdList=" + subTaskIdList +
-                "', startTime='" + startTime.format(dateTimeFormatter) +
+                "', startTime='" + formatedDateTime +
                 "', duration='" + duration.toMinutes() + "'}";
     }
 }
