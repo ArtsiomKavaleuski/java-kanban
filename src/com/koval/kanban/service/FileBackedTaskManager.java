@@ -134,7 +134,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try (Writer fileWriter = new FileWriter(autoSave)) {
             if (tasks.isEmpty() && epics.isEmpty() && subtasks.isEmpty()) {
                 fileWriter.write("");
-                throw new ManagerSaveException("Был сохранен пустой файл.");
+                return;
             }
             fileWriter.write("id,type,name,status,description,epic,startTime,duration\n");
             for (Task task : super.getTasks()) {
@@ -146,6 +146,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             for (SubTask subTask : super.getSubTasks()) {
                 fileWriter.write(taskToString(subTask) + "\n");
             }
+        } catch (FileNotFoundException e) {
+            log.log(Level.SEVERE, "Ошибка: ", e);
+            throw new ManagerSaveException("Ошибка записи в файл. Указанный файл не существует.", e);
         } catch (IOException e) {
             log.log(Level.SEVERE, "Ошибка: ", e);
             throw new ManagerSaveException("Ошибка записи в файл.", e);
@@ -173,9 +176,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         } catch (IOException e) {
             log.log(Level.SEVERE, "Ошибка: ", e);
             throw new ManagerSaveException("Файл пуст или не существует.", e);
-        } catch (ManagerSaveException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
-            throw new ManagerSaveException("Ошибка записи в файл.", e);
         }
         return fbTaskManager;
     }

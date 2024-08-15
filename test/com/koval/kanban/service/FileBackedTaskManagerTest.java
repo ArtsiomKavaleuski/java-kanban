@@ -43,7 +43,7 @@ class FileBackedTaskManagerTest {
                     fbTaskManager.getSubTasks().isEmpty());
         } catch (ManagerSaveException e) {
             e.getMessage();
-            assertEquals("Ошибка записи в файл.", e.getMessage());
+            assertEquals("Файл пуст или не существует.", e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,19 +56,19 @@ class FileBackedTaskManagerTest {
             FileBackedTaskManager fbTaskManager = new FileBackedTaskManager(file);
             Task task1 = new Task("Задача 1", "описание задачи 1", fbTaskManager.getId(),
                     TaskStatus.NEW,
-                    LocalDateTime.of(2024, Month.AUGUST, 14,15,0),
+                    LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
                     Duration.ofMinutes(30));
             Task task2 = new Task("Задача 2", "описание задачи 2", fbTaskManager.getId(),
                     TaskStatus.IN_PROGRESS,
-                    LocalDateTime.of(2024, Month.AUGUST, 15,15,0),
+                    LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
                     Duration.ofMinutes(30));
             fbTaskManager.addToTasks(task1);
             fbTaskManager.addToTasks(task2);
             BufferedReader fileReader = new BufferedReader(new FileReader(file));
             ArrayList<Task> tasks = new ArrayList<>();
-            while(fileReader.ready()) {
+            while (fileReader.ready()) {
                 String line = fileReader.readLine();
-                if(!line.equals("id,type,name,status,description,epic,startTime,duration")) {
+                if (!line.equals("id,type,name,status,description,epic,startTime,duration")) {
                     tasks.add(stringToTask(line));
                 }
             }
@@ -86,11 +86,11 @@ class FileBackedTaskManagerTest {
             FileBackedTaskManager fbTaskManager = new FileBackedTaskManager(file1);
             Task task1 = new Task("Задача 1", "описание задачи 1", fbTaskManager.getId(),
                     TaskStatus.NEW,
-                    LocalDateTime.of(2024, Month.AUGUST, 14,15,0),
+                    LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
                     Duration.ofMinutes(30));
             Task task2 = new Task("Задача 2", "описание задачи 2", fbTaskManager.getId(),
                     TaskStatus.IN_PROGRESS,
-                    LocalDateTime.of(2024, Month.AUGUST, 15,15,0),
+                    LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
                     Duration.ofMinutes(30));
             fbTaskManager.addToTasks(task1);
             fbTaskManager.addToTasks(task2);

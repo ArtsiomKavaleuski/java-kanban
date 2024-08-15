@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 
 import static com.koval.kanban.service.FileBackedTaskManager.loadFromFile;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SomePublicMethodsTest {
 
@@ -191,20 +190,21 @@ public class SomePublicMethodsTest {
     }
 
     @Test
-    void shouldThrowAnExceptionWhenSave() {
+    void shouldThrowAnExceptionWhenSaveInFileThatDoesntExist() {
+        File file = new File("src/com/koval/kanban/phantom", "phantomFile");
+        TaskManager fb = new FileBackedTaskManager(file);
+        Assertions.assertThrows(ManagerSaveException.class, fb::save);
+        Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
+                LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
+                Duration.ofMinutes(30));
+        fb.addToTasks(task1);
+    }
 
-        try {
-            File file = File.createTempFile("test", "load");
-            TaskManager fb = new FileBackedTaskManager(file);
-            Assertions.assertThrows(ManagerSaveException.class, fb::save);
-            Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
-                    LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
-                    Duration.ofMinutes(30));
-            fb.addToTasks(task1);
-            Assertions.assertDoesNotThrow(fb::save);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Test
+    void shouldNotThrowAnExceptionWhenSaveInFile() throws IOException {
+        File file = File.createTempFile("test", "load");
+        TaskManager fb = new FileBackedTaskManager(file);
+        assertDoesNotThrow(fb::save);
     }
 
     @Test
