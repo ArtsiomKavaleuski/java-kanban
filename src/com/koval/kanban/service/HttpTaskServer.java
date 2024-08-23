@@ -3,14 +3,19 @@ package com.koval.kanban.service;
 import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
+import com.sun.net.httpserver.HttpServer;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-public class Main {
-    public static void main(String[] args) {
+public class HttpTaskServer {
+    public static void main(String[] args) throws IOException {
+        HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
+
         File dir = new File("src/com/koval/kanban/resources");
         if (!dir.exists()) {
             dir.mkdirs();
@@ -68,5 +73,15 @@ public class Main {
         for (Task task : fb.getPrioritizedTasks()) {
             System.out.println(task);
         }
+
+        System.out.println(CSVutils.taskToJson(task1));
+        System.out.println(CSVutils.taskToJson(subTask1));
+        System.out.println(CSVutils.taskToJson(epic1));
+
+        System.out.println("");
+        System.out.println(CSVutils.JsonToTask(CSVutils.taskToJson(task1)));
+        System.out.println(CSVutils.JsonToTask(CSVutils.taskToJson(subTask1)));
+        System.out.println(CSVutils.JsonToTask(CSVutils.taskToJson(epic1)));
     }
+
 }

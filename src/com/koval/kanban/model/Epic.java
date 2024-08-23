@@ -7,11 +7,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
+
     private LocalDateTime endTime;
     private ArrayList<Integer> subTaskIdList = new ArrayList<>();
 
     public Epic(String name, String description, int id) {
         super(name, description, id, TaskStatus.NEW, null, Duration.ZERO);
+        taskType = TaskTypes.EPIC;
     }
 
     public ArrayList<Integer> getSubTaskIds() {
@@ -45,13 +47,12 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String formatedDateTime = startTime == null ? null : startTime.format(dateTimeFormatter);
         return "Epic{name='" + super.name +
                 "', description='" + super.description +
                 "', id='" + super.id +
                 "', status='" + super.status +
                 "', subTaskIdList=" + subTaskIdList +
-                "', startTime='" + formatedDateTime +
-                "', duration='" + duration.toMinutes() + "'}";
+                "', startTime='" + startTime +
+                "', duration='" + duration + "'}";
     }
 }

@@ -8,13 +8,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
-    protected final String name;
-    protected final String description;
     protected int id;
+    protected TaskTypes taskType = TaskTypes.TASK;
+    protected final String name;
     protected TaskStatus status;
+    protected final String description;
     protected LocalDateTime startTime;
     protected Duration duration;
-    protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
     public Task(String name, String description, int taskId, TaskStatus status, LocalDateTime startTime, Duration duration) {
         this.name = name;
@@ -59,13 +59,12 @@ public class Task {
 
     @Override
     public String toString() {
-        String formatedDateTime = startTime == null ? null : startTime.format(dateTimeFormatter);
         return "Task{name='" + name +
                 "', description='" + description +
                 "', id='" + id +
                 "', status='" + status +
-                "', startTime='" + formatedDateTime +
-                "', duration='" + duration.toMinutes() + "'}";
+                "', startTime='" + startTime +
+                "', duration='" + duration + "'}";
     }
 
     @Override
