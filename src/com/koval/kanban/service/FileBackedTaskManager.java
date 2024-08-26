@@ -14,6 +14,11 @@ import static com.koval.kanban.service.CSVutils.taskToString;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     File autoSave;
+
+    public static Logger getLog() {
+        return log;
+    }
+
     static Logger log = new TaskManagerLogger(FileBackedTaskManager.class.getName()).getLogger();
 
     public FileBackedTaskManager(File file) {

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class CSVutils {
     public static Task stringToTask(String value) {
@@ -85,6 +86,14 @@ public class CSVutils {
         return task;
     }
 
+    public static String tasksListToJson(List<Task> tasks) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
+        return gson.toJson(tasks);
+    }
+
 }
 
 class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
@@ -113,3 +122,5 @@ class DurationAdapter extends TypeAdapter<Duration> {
         return Duration.ofMinutes(Integer.parseInt(jsonReader.nextString()));
     }
 }
+
+

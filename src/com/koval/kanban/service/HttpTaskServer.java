@@ -14,15 +14,21 @@ import java.time.Month;
 
 public class HttpTaskServer {
     public static void main(String[] args) throws IOException {
-        HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
-
         File dir = new File("src/com/koval/kanban/resources");
         if (!dir.exists()) {
             dir.mkdirs();
         }
         File file = new File(dir, "TaskManager.csv");
+        FileBackedTaskManager fb = Managers.getFileBackTaskManager(file);
+        HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
+        httpServer.createContext("/tasks", new TasksHandler(fb));
+        httpServer.createContext("/epics", new EpicsHandler(fb));
+        httpServer.createContext("/subtasks", new SubtaskHandler(fb));
+        httpServer.createContext("/history", new HistoryHandler(fb));
+        httpServer.createContext("/prioritized", new PrioritizedHandler(fb));
+        httpServer.start();
 
-        TaskManager fb = Managers.getFileBackTaskManager(file);
+
 
         Task task1 = new Task("Задача 1", "описание задачи 1", fb.getId(), TaskStatus.NEW,
                 LocalDateTime.of(2024, Month.AUGUST, 13, 13, 0),
@@ -36,6 +42,12 @@ public class HttpTaskServer {
         fb.addToTasks(task1);
         fb.addToTasks(task2);
         fb.addToTasks(task3);
+
+        Task newTask1 = new Task("Задача 1", "описание задачи 1", task1.getId(), TaskStatus.IN_PROGRESS,
+                LocalDateTime.of(2024, Month.AUGUST, 13, 13, 0),
+                Duration.ofMinutes(60));
+        fb.updateTask(newTask1);
+
 
         Epic epic1 = new Epic("Эпик 1", "описание эпика 1", fb.getId());
         Epic epic2 = new Epic("Эпик 2", "описание эпика 2", fb.getId());
@@ -73,7 +85,15 @@ public class HttpTaskServer {
         for (Task task : fb.getPrioritizedTasks()) {
             System.out.println(task);
         }
+        fb.getTaskById(2);
+        fb.getTaskById(1);
+        fb.getTaskById(0);
+        fb.getEpicById(4);
+        fb.getEpicById(3);
+        fb.getSubTaskById(5);
+        fb.getSubTaskById(6);
 
+        System.out.println("");
         System.out.println(CSVutils.taskToJson(task1));
         System.out.println(CSVutils.taskToJson(subTask1));
         System.out.println(CSVutils.taskToJson(epic1));
