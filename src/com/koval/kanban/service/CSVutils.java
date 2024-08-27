@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class CSVutils {
@@ -93,7 +94,6 @@ public class CSVutils {
                 .create();
         return gson.toJson(tasks);
     }
-
 }
 
 class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
@@ -101,12 +101,20 @@ class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 
     @Override
     public void write(final JsonWriter jsonWriter, final LocalDateTime localDate) throws IOException {
-        jsonWriter.value(localDate.format(dtf));
+        if (localDate == null) {
+            jsonWriter.value("null");
+        } else {
+            jsonWriter.value(localDate.format(dtf));
+        }
     }
 
     @Override
     public LocalDateTime read(final JsonReader jsonReader) throws IOException {
-        return LocalDateTime.parse(jsonReader.nextString(), dtf);
+        try {
+            return LocalDateTime.parse(jsonReader.nextString(), dtf);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 }
 
