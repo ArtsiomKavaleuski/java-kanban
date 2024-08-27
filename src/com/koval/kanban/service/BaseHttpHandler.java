@@ -116,6 +116,7 @@ class TasksHandler extends BaseHttpHandler {
                             int taskId = Integer.parseInt(path[2]);
                             if (fileBackedTaskManager.tasks.containsKey(taskId)) {
                                 fileBackedTaskManager.removeTaskById(taskId);
+                                sendText(httpExchange, "Задача успешно удалена.");
                             } else {
                                 sendNotFound(httpExchange, "Задачи с указанным ID не существует. Поэтому она не может быть удалена.");
                             }
