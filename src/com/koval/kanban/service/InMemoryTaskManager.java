@@ -73,16 +73,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
 
-        sortedTasks.remove(subtasks.get(subTask.getId()));
-        sortedTasks.remove(epics.get(subTask.getEpicId()));
-        subtasks.put(subTask.getId(), subTask);
-        updateEpicStatusAndTime(subTask);
-        addToSortedTasks(epics.get(subTask.getEpicId()));
         Optional<Boolean> isOverlap = Optional.of(sortedTasks.stream().filter(t -> !t.getClass().equals(Epic.class))
                 .filter(t -> t.getId() != subTask.getId())
                 .anyMatch(t -> isTasksOverlap(t, subTask)));
         if (!isOverlap.get()) {
             addToSortedTasks(subTask);
+            sortedTasks.remove(subtasks.get(subTask.getId()));
+            sortedTasks.remove(epics.get(subTask.getEpicId()));
+            subtasks.put(subTask.getId(), subTask);
+            updateEpicStatusAndTime(subTask);
+            addToSortedTasks(epics.get(subTask.getEpicId()));
         }
 
     }
@@ -126,22 +126,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getTasks() {
-        return new ArrayList<>(tasks.values());
+    public List<Task> getTasks() {
+        return tasks.values().stream().toList();
     }
 
     @Override
-    public ArrayList<Epic> getEpics() {
-        return new ArrayList<>(epics.values());
+    public List<? extends Task> getEpics() {
+        return epics.values().stream().toList();
     }
 
     @Override
-    public ArrayList<SubTask> getSubTasks() {
-        return new ArrayList<>(subtasks.values());
+    public List<? extends Task> getSubTasks() {
+        return subtasks.values().stream().toList();
     }
 
     @Override
-    public ArrayList<SubTask> getSubTasksByEpic(int epicId) {
+    public List<? extends Task> getSubTasksByEpic(int epicId) {
         return epics.get(epicId).getSubTaskIds().stream()
                 .map(i -> subtasks.get(i))
                 .collect(Collectors.toCollection(ArrayList::new));

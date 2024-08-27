@@ -4,7 +4,7 @@ import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public interface TaskManager {
@@ -21,13 +21,13 @@ public interface TaskManager {
 
     void updateSubTask(SubTask subTask);
 
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
 
-    ArrayList<Epic> getEpics();
+    List<? extends Task> getEpics();
 
-    ArrayList<SubTask> getSubTasks();
+    List<? extends Task> getSubTasks();
 
-    ArrayList<SubTask> getSubTasksByEpic(int epicId);
+    List<? extends Task> getSubTasksByEpic(int epicId);
 
     Task getTaskById(int id);
 

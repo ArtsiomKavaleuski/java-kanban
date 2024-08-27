@@ -145,10 +145,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             for (Task task : super.getTasks()) {
                 fileWriter.write(taskToString(task) + "\n");
             }
-            for (Epic epic : super.getEpics()) {
+            for (Task epic : super.getEpics()) {
                 fileWriter.write(taskToString(epic) + "\n");
             }
-            for (SubTask subTask : super.getSubTasks()) {
+            for (Task subTask : super.getSubTasks()) {
                 fileWriter.write(taskToString(subTask) + "\n");
             }
         } catch (FileNotFoundException e) {
@@ -170,12 +170,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 String line = fileReader.readLine();
                 String[] split = line.split(",");
                 String type = split[1];
-                if (type.equals("TASK")) {
-                    fbTaskManager.addToTasks(stringToTask(line));
-                } else if (type.equals("EPIC")) {
-                    fbTaskManager.addToEpics((Epic) stringToTask(line));
-                } else if (type.equals("SUBTASK")) {
-                    fbTaskManager.addToSubtasks((SubTask) stringToTask(line));
+                switch (type) {
+                    case "TASK" -> fbTaskManager.addToTasks(stringToTask(line));
+                    case "EPIC" -> fbTaskManager.addToEpics((Epic) stringToTask(line));
+                    case "SUBTASK" -> fbTaskManager.addToSubtasks((SubTask) stringToTask(line));
                 }
             }
         } catch (IOException e) {

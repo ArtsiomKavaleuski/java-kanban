@@ -86,7 +86,7 @@ public class CSVutils {
         return task;
     }
 
-    public static String tasksListToJson(List<Task> tasks) {
+    public static String tasksListToJson(List<? extends Task> tasks) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())

@@ -94,12 +94,12 @@ public class HttpTaskServer {
         fb.getSubTaskById(5);
         fb.getSubTaskById(6);
 
-        System.out.println("");
+        System.out.println();
         System.out.println(CSVutils.taskToJson(task1));
         System.out.println(CSVutils.taskToJson(subTask1));
         System.out.println(CSVutils.taskToJson(epic1));
 
-        System.out.println("");
+        System.out.println();
         System.out.println(CSVutils.JsonToTask(CSVutils.taskToJson(task1)));
         System.out.println(CSVutils.JsonToTask(CSVutils.taskToJson(subTask1)));
         System.out.println(CSVutils.JsonToTask(CSVutils.taskToJson(epic1)));

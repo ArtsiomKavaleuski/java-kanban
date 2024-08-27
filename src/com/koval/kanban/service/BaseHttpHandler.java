@@ -1,5 +1,6 @@
 package com.koval.kanban.service;
 
+import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -63,7 +64,7 @@ class TasksHandler extends BaseHttpHandler {
             switch (method) {
                 case "GET":
                     if (path.length == 2 && path[1].equals("tasks")) {
-                        ArrayList<Task> tasks = fileBackedTaskManager.getTasks();
+                        List<Task> tasks = fileBackedTaskManager.getTasks();
                         String response = CSVutils.tasksListToJson(tasks);
                         sendText(httpExchange, response);
                     } else if (path.length == 3 && path[1].equals("tasks") && fileBackedTaskManager.tasks.containsKey(Integer.parseInt(path[2]))) {
@@ -134,17 +135,95 @@ class TasksHandler extends BaseHttpHandler {
     }
 }
 
+class SubtaskHandler extends BaseHttpHandler {
+    public SubtaskHandler(FileBackedTaskManager fileBackedTaskManager) {
+        super(fileBackedTaskManager);
+    }
+
+    @Override
+    public void handle(HttpExchange httpExchange) throws IOException {
+        String method = httpExchange.getRequestMethod();
+        String[] path = httpExchange.getRequestURI().getPath().split("/");
+        try {
+            switch (method) {
+                case "GET":
+                    if (path.length == 2 && path[1].equals("subtasks")) {
+                        List<? extends Task> subTasks = fileBackedTaskManager.getSubTasks().stream().toList();
+                        String response = CSVutils.tasksListToJson(subTasks);
+                        sendText(httpExchange, response);
+                    } else if (path.length == 3 && path[1].equals("subtasks") && fileBackedTaskManager.subtasks.containsKey(Integer.parseInt(path[2]))) {
+                        int id = Integer.parseInt(path[2]);
+                        SubTask subTask = fileBackedTaskManager.getSubTaskById(id);
+                        String response = CSVutils.taskToJson(subTask);
+                        sendText(httpExchange, response);
+                    } else {
+                        sendNotFound(httpExchange, "Задача с указанным ID не найдена.");
+                    }
+                    break;
+                case "POST":
+                    if (path.length == 2 && path[1].equals("subtasks")) {
+                        InputStream inputStream = httpExchange.getRequestBody();
+                        String requestSubTask = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                        Task subTask = CSVutils.JsonToTask(requestSubTask);
+                        if (!fileBackedTaskManager.subtasks.containsKey(subTask.getId())) {
+                            fileBackedTaskManager.addToSubtasks((SubTask) subTask);
+                            if (fileBackedTaskManager.subtasks.containsKey(subTask.getId())) {
+                                httpExchange.sendResponseHeaders(201, 0);
+                                httpExchange.close();
+                            } else {
+                                sendHasInteractions(httpExchange, "Время переданной задачи пересекается с другими.");
+                            }
+                        } else {
+                            sendHasInteractions(httpExchange, "ID указанной заадачи уже существует.");
+                        }
+                    } else if (path.length == 3 && path[1].equals("subtasks")) {
+                        int subTaskId = Integer.parseInt(path[2]);
+                        String requestBody = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                        SubTask subTask = (SubTask) CSVutils.JsonToTask(requestBody);
+                        if (fileBackedTaskManager.subtasks.containsKey(subTaskId)) {
+                            fileBackedTaskManager.updateSubTask(subTask);
+                            if (fileBackedTaskManager.subtasks.get(subTaskId).equals(subTask)) {
+                                httpExchange.sendResponseHeaders(201, 0);
+                                httpExchange.close();
+                            } else {
+                                sendHasInteractions(httpExchange, "Новое время переданной задачи пересекается с другими.");
+                            }
+                        } else {
+                            sendNotFound(httpExchange, "Задачи с указанным ID не существует. Поэтому она не может быть обновлена");
+                        }
+                    } else {
+                        httpExchange.sendResponseHeaders(500, 0);
+                        httpExchange.close();
+                    }
+                    break;
+                case "DELETE":
+                    if (path.length == 3 && path[1].equals("subtasks")) {
+                        int subTaskId = Integer.parseInt(path[2]);
+                        if (fileBackedTaskManager.subtasks.containsKey(subTaskId)) {
+                            fileBackedTaskManager.removeTaskById(subTaskId);
+                            sendText(httpExchange, "Задача успешно удалена.");
+                        } else {
+                            sendNotFound(httpExchange, "Задачи с указанным ID не существует. Поэтому она не может быть удалена.");
+                        }
+                    }
+                    break;
+                default:
+                    httpExchange.sendResponseHeaders(500, 0);
+                    httpExchange.close();
+            }
+        } catch (NumberFormatException e) {
+            FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
+            httpExchange.sendResponseHeaders(500, 0);
+            httpExchange.close();
+        }
+    }
+}
 
 class EpicsHandler extends BaseHttpHandler {
     public EpicsHandler(FileBackedTaskManager fileBackedTaskManager) {
         super(fileBackedTaskManager);
     }
-}
 
-class SubtaskHandler extends BaseHttpHandler {
-    public SubtaskHandler(FileBackedTaskManager fileBackedTaskManager) {
-        super(fileBackedTaskManager);
-    }
 }
 
 class HistoryHandler extends BaseHttpHandler {
