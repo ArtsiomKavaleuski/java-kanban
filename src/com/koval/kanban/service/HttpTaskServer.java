@@ -22,8 +22,8 @@ public class HttpTaskServer {
         FileBackedTaskManager fb = Managers.getFileBackTaskManager(file);
         HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
         httpServer.createContext("/tasks", new TasksHandler(fb));
-        httpServer.createContext("/epics", new EpicsHandler(fb));
         httpServer.createContext("/subtasks", new SubtaskHandler(fb));
+        httpServer.createContext("/epics", new EpicsHandler(fb));
         httpServer.createContext("/history", new HistoryHandler(fb));
         httpServer.createContext("/prioritized", new PrioritizedHandler(fb));
         httpServer.start();
