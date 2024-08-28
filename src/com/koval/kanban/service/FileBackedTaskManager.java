@@ -26,6 +26,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     @Override
+    public Task getTaskById(int id) {
+        hm.add(tasks.get(id));
+        return tasks.get(id);
+    }
+
+    @Override
     public void addToTasks(Task task) {
         super.addToTasks(task);
         try {
