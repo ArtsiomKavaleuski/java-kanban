@@ -1,26 +1,20 @@
 package com.koval.kanban.service;
 
-import com.koval.kanban.model.Epic;
-import com.koval.kanban.model.SubTask;
-import com.koval.kanban.model.Task;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.logging.Level;
 
 public class HttpTaskServer {
-    FileBackedTaskManager fileBackedTaskManager;
+    TaskManager fileBackedTaskManager;
     HttpServer httpServer;
     int port;
 
-    public HttpTaskServer(int port, FileBackedTaskManager fileBackedTaskManager) throws IOException {
+    public <T extends TaskManager> HttpTaskServer(int port, T taskManager) throws IOException {
 
-        this.fileBackedTaskManager = fileBackedTaskManager;
+        this.fileBackedTaskManager = taskManager;
         this.port = port;
 
         this.httpServer = HttpServer.create(new InetSocketAddress(port), 0);
@@ -29,6 +23,14 @@ public class HttpTaskServer {
         httpServer.createContext("/epics", new EpicsHandler(fileBackedTaskManager));
         httpServer.createContext("/history", new HistoryHandler(fileBackedTaskManager));
         httpServer.createContext("/prioritized", new PrioritizedHandler(fileBackedTaskManager));
+        start();
+    }
+
+    public void stop() {
+        httpServer.stop(0);
+    }
+
+    public void start() {
         httpServer.start();
     }
 

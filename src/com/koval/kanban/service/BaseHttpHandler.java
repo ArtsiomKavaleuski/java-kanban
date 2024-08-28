@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class BaseHttpHandler implements HttpHandler {
-    public FileBackedTaskManager fileBackedTaskManager;
+    public TaskManager fileBackedTaskManager;
 
-    public BaseHttpHandler(FileBackedTaskManager fileBackedTaskManager) {
+    public BaseHttpHandler(TaskManager fileBackedTaskManager) {
         this.fileBackedTaskManager = fileBackedTaskManager;
     }
 
@@ -51,7 +51,7 @@ public class BaseHttpHandler implements HttpHandler {
 }
 
 class TasksHandler extends BaseHttpHandler {
-    public TasksHandler(FileBackedTaskManager fileBackedTaskManager) {
+    public TasksHandler(TaskManager fileBackedTaskManager) {
         super(fileBackedTaskManager);
     }
 
@@ -66,7 +66,8 @@ class TasksHandler extends BaseHttpHandler {
                         List<Task> tasks = fileBackedTaskManager.getTasks();
                         String response = CSVutils.tasksListToJson(tasks);
                         sendText(httpExchange, response);
-                    } else if (path.length == 3 && path[1].equals("tasks") && fileBackedTaskManager.tasks.containsKey(Integer.parseInt(path[2]))) {
+                    } else if (path.length == 3 && path[1].equals("tasks")
+                            && fileBackedTaskManager.getTaskById(Integer.parseInt(path[2])).getId() == Integer.parseInt(path[2])) {
                         int id = Integer.parseInt(path[2]);
                         Task task = fileBackedTaskManager.getTaskById(id);
                         String response = CSVutils.taskToJson(task);
@@ -80,9 +81,9 @@ class TasksHandler extends BaseHttpHandler {
                         InputStream inputStream = httpExchange.getRequestBody();
                         String requestTask = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                         Task task = CSVutils.JsonToTask(requestTask);
-                        if (!fileBackedTaskManager.tasks.containsKey(task.getId())) {
+                        if (fileBackedTaskManager.getTaskById(task.getId()) != null) {
                             fileBackedTaskManager.addToTasks(task);
-                            if (fileBackedTaskManager.tasks.containsKey(task.getId())) {
+                            if (fileBackedTaskManager.getTasks().contains(task)) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();
                             } else {
@@ -95,9 +96,9 @@ class TasksHandler extends BaseHttpHandler {
                         int taskId = Integer.parseInt(path[2]);
                         String requestBody = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                         Task task = CSVutils.JsonToTask(requestBody);
-                        if (fileBackedTaskManager.tasks.containsKey(taskId)) {
+                        if (fileBackedTaskManager.getTasks().contains(task)) {
                             fileBackedTaskManager.updateTask(task);
-                            if (fileBackedTaskManager.tasks.get(taskId).equals(task)) {
+                            if (fileBackedTaskManager.getTaskById(taskId).equals(task)) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();
                             } else {
@@ -114,7 +115,7 @@ class TasksHandler extends BaseHttpHandler {
                 case "DELETE":
                     if (path.length == 3 && path[1].equals("tasks")) {
                             int taskId = Integer.parseInt(path[2]);
-                            if (fileBackedTaskManager.tasks.containsKey(taskId)) {
+                            if (fileBackedTaskManager.getTaskById(Integer.parseInt(path[2])) != null) {
                                 fileBackedTaskManager.removeTaskById(taskId);
                                 sendText(httpExchange, "Задача успешно удалена.");
                             } else {
@@ -135,7 +136,7 @@ class TasksHandler extends BaseHttpHandler {
 }
 
 class SubtaskHandler extends BaseHttpHandler {
-    public SubtaskHandler(FileBackedTaskManager fileBackedTaskManager) {
+    public SubtaskHandler(TaskManager fileBackedTaskManager) {
         super(fileBackedTaskManager);
     }
 
@@ -150,7 +151,8 @@ class SubtaskHandler extends BaseHttpHandler {
                         List<? extends Task> subTasks = fileBackedTaskManager.getSubTasks().stream().toList();
                         String response = CSVutils.tasksListToJson(subTasks);
                         sendText(httpExchange, response);
-                    } else if (path.length == 3 && path[1].equals("subtasks") && fileBackedTaskManager.subtasks.containsKey(Integer.parseInt(path[2]))) {
+                    } else if (path.length == 3 && path[1].equals("subtasks")
+                            && fileBackedTaskManager.getSubTaskById(Integer.parseInt(path[2])) != null) {
                         int id = Integer.parseInt(path[2]);
                         SubTask subTask = fileBackedTaskManager.getSubTaskById(id);
                         String response = CSVutils.taskToJson(subTask);
@@ -164,9 +166,9 @@ class SubtaskHandler extends BaseHttpHandler {
                         InputStream inputStream = httpExchange.getRequestBody();
                         String requestSubTask = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                         Task subTask = CSVutils.JsonToTask(requestSubTask);
-                        if (!fileBackedTaskManager.subtasks.containsKey(subTask.getId())) {
+                        if (fileBackedTaskManager.getSubTaskById(subTask.getId()) == null) {
                             fileBackedTaskManager.addToSubtasks((SubTask) subTask);
-                            if (fileBackedTaskManager.subtasks.containsKey(subTask.getId())) {
+                            if (fileBackedTaskManager.getSubTaskById(subTask.getId()).equals(subTask)) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();
                             } else {
@@ -179,9 +181,9 @@ class SubtaskHandler extends BaseHttpHandler {
                         int subTaskId = Integer.parseInt(path[2]);
                         String requestBody = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                         SubTask subTask = (SubTask) CSVutils.JsonToTask(requestBody);
-                        if (fileBackedTaskManager.subtasks.containsKey(subTaskId)) {
+                        if (fileBackedTaskManager.getSubTaskById(subTaskId) != null) {
                             fileBackedTaskManager.updateSubTask(subTask);
-                            if (fileBackedTaskManager.subtasks.get(subTaskId).equals(subTask)) {
+                            if (fileBackedTaskManager.getSubTaskById(subTaskId).equals(subTask)) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();
                             } else {
@@ -198,7 +200,7 @@ class SubtaskHandler extends BaseHttpHandler {
                 case "DELETE":
                     if (path.length == 3 && path[1].equals("subtasks")) {
                         int subTaskId = Integer.parseInt(path[2]);
-                        if (fileBackedTaskManager.subtasks.containsKey(subTaskId)) {
+                        if (fileBackedTaskManager.getSubTaskById(subTaskId) != null) {
                             fileBackedTaskManager.removeTaskById(subTaskId);
                             sendText(httpExchange, "Подзадача успешно удалена.");
                         } else {
@@ -219,7 +221,7 @@ class SubtaskHandler extends BaseHttpHandler {
 }
 
 class EpicsHandler extends BaseHttpHandler {
-    public EpicsHandler(FileBackedTaskManager fileBackedTaskManager) {
+    public EpicsHandler(TaskManager fileBackedTaskManager) {
         super(fileBackedTaskManager);
     }
 
@@ -234,12 +236,12 @@ class EpicsHandler extends BaseHttpHandler {
                         List<? extends Task> epics = fileBackedTaskManager.getEpics();
                         String response = CSVutils.tasksListToJson(epics);
                         sendText(httpExchange, response);
-                    } else if (path.length == 3 && path[1].equals("epics") && fileBackedTaskManager.epics.containsKey(Integer.parseInt(path[2]))) {
+                    } else if (path.length == 3 && path[1].equals("epics") && fileBackedTaskManager.getEpicById(Integer.parseInt(path[2])) != null) {
                         int id = Integer.parseInt(path[2]);
                         Epic epic = fileBackedTaskManager.getEpicById(id);
                         String response = CSVutils.taskToJson(epic);
                         sendText(httpExchange, response);
-                    } else if (path.length == 4 && path[1].equals("epics") && fileBackedTaskManager.epics.containsKey(Integer.parseInt(path[2])) && path[3].equals("subtasks")){
+                    } else if (path.length == 4 && path[1].equals("epics") && fileBackedTaskManager.getEpicById(Integer.parseInt(path[2])) != null && path[3].equals("subtasks")){
                         int id = Integer.parseInt(path[2]);
                         List<? extends Task> epicSubTasks = fileBackedTaskManager.getSubTasksByEpic(id);
                         String response = CSVutils.tasksListToJson(epicSubTasks);
@@ -253,9 +255,9 @@ class EpicsHandler extends BaseHttpHandler {
                         InputStream inputStream = httpExchange.getRequestBody();
                         String requestEpic = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                         Task epic = CSVutils.JsonToTask(requestEpic);
-                        if (!fileBackedTaskManager.epics.containsKey(epic.getId())) {
+                        if (fileBackedTaskManager.getEpicById(epic.getId()) == null) {
                             fileBackedTaskManager.addToEpics((Epic) epic);
-                            if (fileBackedTaskManager.epics.containsKey(epic.getId())) {
+                            if (fileBackedTaskManager.getEpicById(epic.getId()) != null) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();
                             } else {
@@ -272,7 +274,7 @@ class EpicsHandler extends BaseHttpHandler {
                 case "DELETE":
                     if (path.length == 3 && path[1].equals("epics")) {
                         int id = Integer.parseInt(path[2]);
-                        if (fileBackedTaskManager.epics.containsKey(id)) {
+                        if (fileBackedTaskManager.getEpicById(id) != null) {
                             fileBackedTaskManager.removeTaskById(id);
                             sendText(httpExchange, "Задача успешно удалена.");
                         } else {
@@ -294,7 +296,7 @@ class EpicsHandler extends BaseHttpHandler {
 }
 
 class HistoryHandler extends BaseHttpHandler {
-    public HistoryHandler(FileBackedTaskManager fileBackedTaskManager) {
+    public HistoryHandler(TaskManager fileBackedTaskManager) {
         super(fileBackedTaskManager);
     }
 
@@ -307,7 +309,7 @@ class HistoryHandler extends BaseHttpHandler {
 }
 
 class PrioritizedHandler extends BaseHttpHandler {
-    public PrioritizedHandler(FileBackedTaskManager fileBackedTaskManager) {
+    public PrioritizedHandler(TaskManager fileBackedTaskManager) {
         super(fileBackedTaskManager);
     }
 
