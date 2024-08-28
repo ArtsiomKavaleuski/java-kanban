@@ -69,11 +69,12 @@ public class CSVutils {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .serializeNulls()
                 .create();
         JsonElement jsonElement = JsonParser.parseString(value);
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         Task task = null;
-        switch(jsonObject.get("taskType").getAsString()) {
+        switch (jsonObject.get("taskType").getAsString()) {
             case "TASK":
                 task = gson.fromJson(value, Task.class);
                 break;
