@@ -1,5 +1,6 @@
 package com.koval.kanban.model;
 
+import com.koval.kanban.service.CSVutils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +13,7 @@ class EpicTest {
         int id = 0;
         Epic epic1 = new Epic(name, description, id);
         Epic epic2 = new Epic(name, description, id);
-        assertEquals(epic1, epic2, "задачи не равны");
+        assertEquals(CSVutils.taskToJson(epic1), CSVutils.taskToJson(epic2), "задачи не равны");
     }
 
 }

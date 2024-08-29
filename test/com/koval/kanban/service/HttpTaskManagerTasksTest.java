@@ -102,19 +102,11 @@ public class HttpTaskManagerTasksTest {
 
     @Test
     public void shouldReturnNotFoundCodeWhenGetTaskById() throws IOException, InterruptedException {
-        Task task1 = new Task("task1", "task1 description", taskManager.getId(), TaskStatus.NEW, LocalDateTime.of(2024, Month.AUGUST, 26, 15, 0), Duration.ofMinutes(90));
-        String task1Json = CSVutils.taskToJson(task1);
-
         HttpClient client = HttpClient.newHttpClient();
-        URI url1 = URI.create("http://localhost:8080/tasks");
-        URI url2 = URI.create("http://localhost:8080/tasks/" + task1.getId() + 1);
-        HttpRequest request1 = HttpRequest.newBuilder().uri(url1).POST(HttpRequest.BodyPublishers.ofString(task1Json)).build();
-        HttpRequest request2 = HttpRequest.newBuilder().uri(url2).GET().build();
-
-        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
-        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-
-        Assertions.assertEquals(404, response2.statusCode());
+        URI url = URI.create("http://localhost:8080/tasks/" + 1);
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertEquals(404, response.statusCode());
     }
 
     @Test
@@ -159,6 +151,90 @@ public class HttpTaskManagerTasksTest {
         Assertions.assertEquals("task1", tasksFromManagers.get(0).getName(), "Некорректное имя задачи");
     }
 
+    @Test
+    public void shouldReturnSuccessCodeAndUpdateTask() throws IOException, InterruptedException {
+        Task task1 = new Task("task1", "task1 description", taskManager.getId(),
+                TaskStatus.NEW, LocalDateTime.of(2024, Month.AUGUST, 29,15,0),
+                Duration.ofMinutes(60));
+        Task taskUpdated = new Task("task1Updatedd", "task1 description", task1.getId(),
+                TaskStatus.IN_PROGRESS, LocalDateTime.of(2024, Month.AUGUST, 30,15,0),
+                Duration.ofMinutes(90));
+        String task1Json = CSVutils.taskToJson(task1);
+        String taskUpdatedJson = CSVutils.taskToJson(taskUpdated);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url1 = URI.create("http://localhost:8080/tasks");
+        URI url2 = URI.create("http://localhost:8080/tasks/" + task1.getId());
+        HttpRequest request1 = HttpRequest.newBuilder().uri(url1).POST(HttpRequest.BodyPublishers.ofString(task1Json)).build();
+        HttpRequest request2 = HttpRequest.newBuilder().uri(url2).POST(HttpRequest.BodyPublishers.ofString(taskUpdatedJson)).build();
+
+        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertEquals(201, response2.statusCode());
 
 
+        Assertions.assertEquals(taskUpdated, taskManager.getTasks().getFirst(), "Задачи не равны");
+    }
+
+    @Test
+    public void shouldReturnFailCodeWhenUpdateOverlapedTask() throws IOException, InterruptedException {
+        Task task1 = new Task("task1", "task1 description", taskManager.getId(),
+                TaskStatus.NEW, LocalDateTime.of(2024, Month.AUGUST, 29,15,0),
+                Duration.ofMinutes(60));
+        Task task2 = new Task("task2", "task2 description", taskManager.getId(),
+                TaskStatus.NEW, LocalDateTime.of(2024, Month.AUGUST, 30,15,0),
+                Duration.ofMinutes(60));
+        Task taskUpdated = new Task("task1Updated", "task1 description", task1.getId(),
+                TaskStatus.IN_PROGRESS, LocalDateTime.of(2024, Month.AUGUST, 30,15,30),
+                Duration.ofMinutes(90));
+        String task1Json = CSVutils.taskToJson(task1);
+        String task2Json = CSVutils.taskToJson(task2);
+        String taskUpdatedJson = CSVutils.taskToJson(taskUpdated);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url1 = URI.create("http://localhost:8080/tasks");
+        URI url2 = URI.create("http://localhost:8080/tasks/" + task1.getId());
+        HttpRequest request1 = HttpRequest.newBuilder().uri(url1).POST(HttpRequest.BodyPublishers.ofString(task1Json)).build();
+        HttpRequest request2 = HttpRequest.newBuilder().uri(url1).POST(HttpRequest.BodyPublishers.ofString(task2Json)).build();
+        HttpRequest request3 = HttpRequest.newBuilder().uri(url2).POST(HttpRequest.BodyPublishers.ofString(taskUpdatedJson)).build();
+
+        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response3 = client.send(request3, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertEquals(406, response3.statusCode());
+    }
+
+    @Test
+    public void shouldReturnSuccessCodeWhenDeleteTaskById() throws IOException, InterruptedException {
+        Task task1 = new Task("task1", "task1 description", taskManager.getId(),
+                TaskStatus.NEW, LocalDateTime.of(2024, Month.AUGUST, 29,15,0),
+                Duration.ofMinutes(60));
+        Task task2 = new Task("task2", "task2 description", taskManager.getId(),
+                TaskStatus.NEW, LocalDateTime.of(2024, Month.AUGUST, 30,15,0),
+                Duration.ofMinutes(60));
+
+        String task1Json = CSVutils.taskToJson(task1);
+        String task2Json = CSVutils.taskToJson(task2);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url1 = URI.create("http://localhost:8080/tasks");
+        URI url2 = URI.create("http://localhost:8080/tasks/" + 1);
+        HttpRequest request1 = HttpRequest.newBuilder().uri(url1).POST(HttpRequest.BodyPublishers.ofString(task1Json)).build();
+        HttpRequest request2 = HttpRequest.newBuilder().uri(url1).POST(HttpRequest.BodyPublishers.ofString(task2Json)).build();
+        HttpRequest request3 = HttpRequest.newBuilder().uri(url2).DELETE().build();
+
+        HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response3 = client.send(request3, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertEquals(200, response3.statusCode());
+    }
+
+    @Test
+    public void shouldReturnFailCodeWhenDeletedTaskIsAbsent() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks/"  + 1);
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertEquals(404, response.statusCode());
+    }
 }
