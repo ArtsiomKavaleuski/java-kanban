@@ -23,7 +23,6 @@ public class HttpTaskServer {
         httpServer.createContext("/epics", new EpicsHandler(fileBackedTaskManager));
         httpServer.createContext("/history", new HistoryHandler(fileBackedTaskManager));
         httpServer.createContext("/prioritized", new PrioritizedHandler(fileBackedTaskManager));
-        start();
     }
 
     public void stop() {
@@ -42,6 +41,7 @@ public class HttpTaskServer {
             }
             File file = new File(dir, "TaskManager.csv");
             HttpTaskServer httpTaskServer = new HttpTaskServer(8080, Managers.getTestFileBackTaskManager(file));
+            httpTaskServer.start();
         }  catch (IOException e) {
             FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
         }
