@@ -110,8 +110,8 @@ public class HttpTaskManagerSubTasksTest {
         Assertions.assertEquals(200, response4.statusCode());
         Assertions.assertEquals(200, response5.statusCode());
 
-        Task subtask1respond = CSVutils.JsonToTask(response4.body());
-        Task subtask2respond = CSVutils.JsonToTask(response5.body());
+        Task subtask1respond = CSVutils.jsonToTask(response4.body());
+        Task subtask2respond = CSVutils.jsonToTask(response5.body());
 
         Assertions.assertEquals(subtask1, subtask1respond, "Задачи не равны");
         Assertions.assertEquals(subtask2, subtask2respond, "Задачи не равны");
@@ -219,7 +219,7 @@ public class HttpTaskManagerSubTasksTest {
         HttpResponse<String> response4 = client.send(request4, HttpResponse.BodyHandlers.ofString());
         HttpResponse<String> response5 = client.send(request5, HttpResponse.BodyHandlers.ofString());
         Assertions.assertEquals(201, response4.statusCode());
-        Assertions.assertEquals(subtask3, CSVutils.JsonToTask(response5.body()), "Задача не была изменена.");
+        Assertions.assertEquals(subtask3, CSVutils.jsonToTask(response5.body()), "Задача не была изменена.");
     }
 
     @Test
@@ -255,7 +255,7 @@ public class HttpTaskManagerSubTasksTest {
         HttpResponse<String> response4 = client.send(request4, HttpResponse.BodyHandlers.ofString());
         HttpResponse<String> response5 = client.send(request5, HttpResponse.BodyHandlers.ofString());
         Assertions.assertEquals(406, response4.statusCode());
-        Assertions.assertEquals(subtask2, CSVutils.JsonToTask(response5.body()), "Задача была изменена.");
+        Assertions.assertEquals(subtask2, CSVutils.jsonToTask(response5.body()), "Задача была изменена.");
     }
 
     @Test

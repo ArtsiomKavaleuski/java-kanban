@@ -53,7 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         Optional<Boolean> isOverlap = Optional.of(sortedTasks.stream().filter(t -> !t.getClass().equals(Epic.class))
-                        .filter(t -> t.getId() != task.getId())
+                .filter(t -> t.getId() != task.getId())
                 .anyMatch(t -> isTasksOverlap(t, task)));
         if (!isOverlap.get()) {
             sortedTasks.remove(tasks.get(task.getId()));

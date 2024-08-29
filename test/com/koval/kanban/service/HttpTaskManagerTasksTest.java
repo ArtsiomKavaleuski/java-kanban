@@ -93,8 +93,8 @@ public class HttpTaskManagerTasksTest {
         Assertions.assertEquals(200, response3.statusCode());
         Assertions.assertEquals(200, response4.statusCode());
 
-        Task task1respond = CSVutils.JsonToTask(response3.body());
-        Task task2respond = CSVutils.JsonToTask(response4.body());
+        Task task1respond = CSVutils.jsonToTask(response3.body());
+        Task task2respond = CSVutils.jsonToTask(response4.body());
 
         Assertions.assertEquals(task1, task1respond, "Задачи не равны");
         Assertions.assertEquals(task2, task2respond, "Задачи не равны");

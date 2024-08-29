@@ -123,7 +123,7 @@ public class HttpTaskManagerEpicsTest {
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
         HttpResponse<String> response3 = client.send(request3, HttpResponse.BodyHandlers.ofString());
-        SubTask subtaskFromManager = (SubTask) CSVutils.JsonToTask(response3.body()
+        SubTask subtaskFromManager = (SubTask) CSVutils.jsonToTask(response3.body()
                 .replace("[", "").replace("]", ""));
 
         Assertions.assertEquals(200, response3.statusCode());

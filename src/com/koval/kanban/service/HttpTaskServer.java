@@ -42,7 +42,7 @@ public class HttpTaskServer {
             File file = new File(dir, "TaskManager.csv");
             HttpTaskServer httpTaskServer = new HttpTaskServer(8080, Managers.getTestFileBackTaskManager(file));
             httpTaskServer.start();
-        }  catch (IOException e) {
+        } catch (IOException e) {
             FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
         }
     }

@@ -1,18 +1,13 @@
 package com.koval.kanban.service;
 
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 import com.koval.kanban.model.TaskTypes;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class CSVutils {
@@ -65,7 +60,7 @@ public class CSVutils {
         return gson.toJson(task);
     }
 
-    public static Task JsonToTask(String value) {
+    public static Task jsonToTask(String value) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
@@ -97,39 +92,7 @@ public class CSVutils {
     }
 }
 
-class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
-    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
-    @Override
-    public void write(final JsonWriter jsonWriter, final LocalDateTime localDate) throws IOException {
-        if (localDate == null) {
-            jsonWriter.value("null");
-        } else {
-            jsonWriter.value(localDate.format(dtf));
-        }
-    }
 
-    @Override
-    public LocalDateTime read(final JsonReader jsonReader) throws IOException {
-        try {
-            return LocalDateTime.parse(jsonReader.nextString(), dtf);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
-    }
-}
-
-class DurationAdapter extends TypeAdapter<Duration> {
-
-    @Override
-    public void write(final JsonWriter jsonWriter, final Duration duration) throws IOException {
-        jsonWriter.value(duration.toMinutes());
-    }
-
-    @Override
-    public Duration read(final JsonReader jsonReader) throws IOException {
-        return Duration.ofMinutes(Integer.parseInt(jsonReader.nextString()));
-    }
-}
 
 
