@@ -50,7 +50,7 @@ class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldSaveTwoTasksToFile() throws IOException {
+    void shouldSaveTwoTasksToFile() throws IOException, ManagerSaveException {
         try {
             File file = File.createTempFile("test", "save");
             FileBackedTaskManager fbTaskManager = new FileBackedTaskManager(file);

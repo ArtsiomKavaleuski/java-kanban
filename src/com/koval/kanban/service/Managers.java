@@ -18,13 +18,13 @@ public class Managers {
         return new FileBackedTaskManager(file);
     }
 
-    public static FileBackedTaskManager getTestFileBackTaskManager(File file) {
+    public static FileBackedTaskManager getTestFileBackTaskManager(File file) throws ManagerSaveException {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
         Task task1 = new Task("Задача 1", "описание задачи 1", fileBackedTaskManager.getId(), TaskStatus.NEW,
-                LocalDateTime.of(2024, Month.AUGUST, 13, 13, 0),
+                LocalDateTime.of(2024, Month.AUGUST, 1, 9, 0),
                 Duration.ofMinutes(60));
         Task task2 = new Task("Задача 2", "описание задачи 2", fileBackedTaskManager.getId(), TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2024, Month.AUGUST, 13, 14, 30),
+                LocalDateTime.of(2024, Month.AUGUST, 1, 10, 30),
                 Duration.ofMinutes(30));
         Task task3 = new Task("Задача 3", "описание задачи 3", fileBackedTaskManager.getId(), TaskStatus.IN_PROGRESS,
                 LocalDateTime.of(2024, Month.AUGUST, 19, 9, 0),

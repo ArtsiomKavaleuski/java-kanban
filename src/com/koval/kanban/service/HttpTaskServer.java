@@ -33,7 +33,7 @@ public class HttpTaskServer {
         httpServer.start();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ManagerSaveException {
         try {
             File dir = new File("src/com/koval/kanban/resources");
             if (!dir.exists()) {
@@ -42,7 +42,7 @@ public class HttpTaskServer {
             File file = new File(dir, "TaskManager.csv");
             HttpTaskServer httpTaskServer = new HttpTaskServer(8080, Managers.getTestFileBackTaskManager(file));
             httpTaskServer.start();
-        } catch (IOException e) {
+        } catch (IOException | ManagerSaveException e) {
             FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
         }
     }

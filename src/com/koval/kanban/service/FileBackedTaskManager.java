@@ -32,7 +32,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     @Override
-    public void addToTasks(Task task) {
+    public void addToTasks(Task task) throws ManagerSaveException {
         super.addToTasks(task);
         try {
             save();
@@ -52,43 +52,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     @Override
-    public void addToSubtasks(SubTask subTask) {
+    public void addToSubtasks(SubTask subTask) throws ManagerSaveException {
         super.addToSubtasks(subTask);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
-        }
+        save();
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws ManagerSaveException {
         super.updateTask(task);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
-        }
+        save();
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public void updateEpic(Epic epic) throws ManagerSaveException {
         super.updateEpic(epic);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
-        }
+        save();
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
+    public void updateSubTask(SubTask subTask) throws ManagerSaveException {
         super.updateSubTask(subTask);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
-        }
+        save();
     }
 
     @Override

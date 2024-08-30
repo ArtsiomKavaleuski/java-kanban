@@ -12,19 +12,70 @@ import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private static int taskIdCounter = 0;
+
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
     HashMap<Integer, SubTask> subtasks = new HashMap<>();
     TreeSet<Task> sortedTasks = new TreeSet<>(new TaskByDateComparator());
     HistoryManager hm = Managers.getDefaultHistory();
+    IntervalsTimeTable intervals = new IntervalsTimeTable();
+    TreeMap<LocalDateTime, Boolean> slots = intervals.getTimeIntervals();
 
     @Override
-    public void addToTasks(Task task) {
-        Optional<Boolean> isOverlap = Optional.of(sortedTasks.stream().filter(t -> !t.getClass().equals(Epic.class))
-                .anyMatch(t -> isTasksOverlap(t, task)));
-        if (!isOverlap.get()) {
+    public <T extends Task> boolean checkOverlap(T task) {
+        boolean isOverlapped = false;
+        if (!task.getClass().equals(Epic.class) && task.getStartTime() != null) {
+            LocalDateTime tempDateTime = task.getStartTime();
+            while(tempDateTime.isBefore(task.getEndTime())) {
+                tempDateTime = tempDateTime.plusMinutes(intervals.MINUTES_INTERVAL);
+                if(slots.get(tempDateTime)) {
+                    isOverlapped = true;
+                    break;
+                }
+            }
+        }
+        return isOverlapped;
+    }
+
+    @Override
+    public <T extends Task> void writeSlots(T task) {
+        if (!task.getClass().equals(Epic.class) && task.getStartTime() != null) {
+            LocalDateTime tempDateTime = task.getStartTime();
+            while(true) {
+                if(tempDateTime.isBefore(task.getEndTime())) {
+                    slots.put(tempDateTime, true);
+                    tempDateTime = tempDateTime.plusMinutes(intervals.MINUTES_INTERVAL);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public <T extends Task> void freeUpSlots(T task) {
+        if (!task.getClass().equals(Epic.class) && task.getStartTime() != null) {
+            LocalDateTime tempDateTime = task.getStartTime();
+            while(true) {
+                if(tempDateTime.isBefore(task.getEndTime())) {
+                    slots.put(tempDateTime, false);
+                    tempDateTime = tempDateTime.plusMinutes(intervals.MINUTES_INTERVAL);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public void addToTasks(Task task) throws ManagerSaveException {
+        if (!checkOverlap(task)) {
             tasks.computeIfAbsent(task.getId(), k -> task);
+            writeSlots(task);
             addToSortedTasks(task);
+        } else {
+            throw new ManagerSaveException("Добавляемая задача пересекается по времени выполнения");
         }
     }
 
@@ -32,14 +83,11 @@ public class InMemoryTaskManager implements TaskManager {
     public void addToEpics(Epic epic) {
         epics.computeIfAbsent(epic.getId(), k -> epic);
         addToSortedTasks(epic);
-
     }
 
     @Override
-    public void addToSubtasks(SubTask subTask) {
-        Optional<Boolean> isOverlap = Optional.of(sortedTasks.stream().filter(t -> !t.getClass().equals(Epic.class))
-                .anyMatch(t -> isTasksOverlap(t, subTask)));
-        if (!isOverlap.get()) {
+    public void addToSubtasks(SubTask subTask) throws ManagerSaveException {
+        if (!checkOverlap(subTask)) {
             if (subTask.getEpicId() != subTask.getId()) {
                 subtasks.computeIfAbsent(subTask.getId(), k -> subTask);
                 epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
@@ -47,23 +95,27 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpicStatusAndTime(subTask);
             addToSortedTasks(epics.get(subTask.getEpicId()));
             addToSortedTasks(subTask);
+            writeSlots(subTask);
+        } else {
+            throw new ManagerSaveException("Добавляемая подзадача пересекается по времени выполнения");
         }
     }
 
     @Override
-    public void updateTask(Task task) {
-        Optional<Boolean> isOverlap = Optional.of(sortedTasks.stream().filter(t -> !t.getClass().equals(Epic.class))
-                .filter(t -> t.getId() != task.getId())
-                .anyMatch(t -> isTasksOverlap(t, task)));
-        if (!isOverlap.get()) {
+    public void updateTask(Task task) throws ManagerSaveException {
+        if (!checkOverlap(task)) {
             sortedTasks.remove(tasks.get(task.getId()));
+            freeUpSlots(task);
             tasks.put(task.getId(), task);
             addToSortedTasks(task);
+            writeSlots(task);
+        } else {
+            throw new ManagerSaveException("Обновленное время задачи пересекается по времени выполнения");
         }
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public void updateEpic(Epic epic) throws ManagerSaveException {
         sortedTasks.remove(tasks.get(epic.getId()));
         removeSubTasksByEpic(epic);
         epics.put(epic.getId(), epic);
@@ -71,20 +123,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
-
-        Optional<Boolean> isOverlap = Optional.of(sortedTasks.stream().filter(t -> !t.getClass().equals(Epic.class))
-                .filter(t -> t.getId() != subTask.getId())
-                .anyMatch(t -> isTasksOverlap(t, subTask)));
-        if (!isOverlap.get()) {
+    public void updateSubTask(SubTask subTask) throws ManagerSaveException {
+        if (!checkOverlap(subTask)) {
             addToSortedTasks(subTask);
             sortedTasks.remove(subtasks.get(subTask.getId()));
             sortedTasks.remove(epics.get(subTask.getEpicId()));
+            freeUpSlots(subTask);
             subtasks.put(subTask.getId(), subTask);
             updateEpicStatusAndTime(subTask);
             addToSortedTasks(epics.get(subTask.getEpicId()));
+            writeSlots(subTask);
+        } else {
+            throw new ManagerSaveException("Обновленное время подзадачи пересекается по времени выполнения");
         }
-
     }
 
     private void updateEpicStatusAndTime(SubTask subTask) {
@@ -194,6 +245,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTaskById(int id) {
         if (tasks.containsKey(id)) {
+            freeUpSlots(tasks.get(id));
+            sortedTasks.remove(tasks.get(id));
             tasks.remove(id);
             hm.remove(id);
         } else if (epics.containsKey(id)) {
@@ -202,6 +255,8 @@ public class InMemoryTaskManager implements TaskManager {
             hm.remove(id);
         } else if (subtasks.containsKey(id)) {
             removeSubTaskFromEpicSubTaskIds(id);
+            freeUpSlots(subtasks.get(id));
+            sortedTasks.remove(subtasks.get(id));
             subtasks.get(id).resetId();
             subtasks.remove(id);
             hm.remove(id);
@@ -247,7 +302,6 @@ public class InMemoryTaskManager implements TaskManager {
             CopyOnWriteArrayList<Integer> tempSubTasksList = new CopyOnWriteArrayList<>(epics.get(epic.getId()).getSubTaskIds());
             tempSubTasksList.stream().forEach(i -> {
                 removeTaskById(i);
-                hm.remove(i);
             });
         }
     }
@@ -263,18 +317,6 @@ public class InMemoryTaskManager implements TaskManager {
         return sortedTasks;
     }
 
-    @Override
-    public <T extends Task> boolean isTasksOverlap(T task1, T task2) {
-        if (task1.getStartTime().equals(task2.getStartTime())) {
-            return true;
-        } else if (task1.getStartTime().isBefore(task2.getStartTime())) {
-            return !task1.getEndTime().isBefore(task2.getStartTime());
-        } else if (task1.getStartTime().isAfter(task2.getStartTime())) {
-            return !task1.getStartTime().isAfter(task2.getEndTime());
-        } else {
-            return true;
-        }
-    }
 
     @Override
     public boolean equals(Object o) {

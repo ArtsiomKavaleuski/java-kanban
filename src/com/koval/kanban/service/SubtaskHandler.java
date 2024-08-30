@@ -42,7 +42,11 @@ public class SubtaskHandler extends BaseHttpHandler {
                         String requestSubTask = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                         Task subTask = CSVutils.jsonToTask(requestSubTask);
                         if (fileBackedTaskManager.getSubTasks().stream().filter(t -> t.getId() == subTask.getId()).toList().isEmpty()) {
-                            fileBackedTaskManager.addToSubtasks((SubTask) subTask);
+                            try {
+                                fileBackedTaskManager.addToSubtasks((SubTask) subTask);
+                            } catch (ManagerSaveException e) {
+                                FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
+                            }
                             if (!fileBackedTaskManager.getSubTasks().stream().filter(t -> t.equals(subTask)).toList().isEmpty()) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();
@@ -57,7 +61,11 @@ public class SubtaskHandler extends BaseHttpHandler {
                         String requestBody = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                         SubTask subTask = (SubTask) CSVutils.jsonToTask(requestBody);
                         if (!fileBackedTaskManager.getSubTasks().stream().filter(t -> t.getId() == subTask.getId()).toList().isEmpty()) {
-                            fileBackedTaskManager.updateSubTask(subTask);
+                            try {
+                                fileBackedTaskManager.updateSubTask(subTask);
+                            } catch (ManagerSaveException e) {
+                                FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
+                            }
                             if (!fileBackedTaskManager.getSubTasks().stream().filter(t -> t.equals(subTask)).toList().isEmpty()) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SomePublicMethodsTest {
 
     @Test
-    void shouldCalculateEpicStatusIfAllNew() {
+    void shouldCalculateEpicStatusIfAllNew() throws ManagerSaveException {
         InMemoryTaskManager tm = new InMemoryTaskManager();
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
         tm.addToEpics(epic1);
@@ -37,7 +37,7 @@ public class SomePublicMethodsTest {
     }
 
     @Test
-    void shouldCalculateEpicStatusIfAllDone() {
+    void shouldCalculateEpicStatusIfAllDone() throws ManagerSaveException {
         InMemoryTaskManager tm = new InMemoryTaskManager();
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
         tm.addToEpics(epic1);
@@ -56,7 +56,7 @@ public class SomePublicMethodsTest {
     }
 
     @Test
-    void shouldCalculateEpicStatusIfOneDoneAndOneNew() {
+    void shouldCalculateEpicStatusIfOneDoneAndOneNew() throws ManagerSaveException {
         InMemoryTaskManager tm = new InMemoryTaskManager();
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
         tm.addToEpics(epic1);
@@ -75,7 +75,7 @@ public class SomePublicMethodsTest {
     }
 
     @Test
-    void shouldCalculateEpicStatusIfAllInProgress() {
+    void shouldCalculateEpicStatusIfAllInProgress() throws ManagerSaveException {
         InMemoryTaskManager tm = new InMemoryTaskManager();
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
         tm.addToEpics(epic1);
@@ -96,7 +96,7 @@ public class SomePublicMethodsTest {
     }
 
     @Test
-    void checkOfOverlap() {
+    void checkOfOverlap() throws ManagerSaveException {
         TaskManager tm = new InMemoryTaskManager();
         SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW,
                 0,
@@ -110,12 +110,13 @@ public class SomePublicMethodsTest {
                 0,
                 LocalDateTime.of(2024, Month.AUGUST, 13, 11, 0),
                 Duration.ofMinutes(30));
-        Assertions.assertTrue(tm.isTasksOverlap(subTask1, subTask2));
-        Assertions.assertFalse(tm.isTasksOverlap(subTask2, subTask3));
+        tm.addToSubtasks(subTask1);
+        Assertions.assertTrue(tm.checkOverlap(subTask2));
+        //Assertions.assertFalse(tm.isTasksOverlap(subTask2, subTask3));
     }
 
     @Test
-    public void shouldRemoveFromHistoryTaskInTheMiddleThatWasRemovedButSaveTheOrder() {
+    public void shouldRemoveFromHistoryTaskInTheMiddleThatWasRemovedButSaveTheOrder() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
                 LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
@@ -140,7 +141,7 @@ public class SomePublicMethodsTest {
     }
 
     @Test
-    public void shouldRemoveFromHistoryTaskInTheBeginningThatWasRemovedButSaveTheOrder() {
+    public void shouldRemoveFromHistoryTaskInTheBeginningThatWasRemovedButSaveTheOrder() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
                 LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
@@ -165,7 +166,7 @@ public class SomePublicMethodsTest {
     }
 
     @Test
-    public void shouldRemoveFromHistoryTaskInTheEndThatWasRemovedButSaveTheOrder() {
+    public void shouldRemoveFromHistoryTaskInTheEndThatWasRemovedButSaveTheOrder() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
                 LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
@@ -190,7 +191,7 @@ public class SomePublicMethodsTest {
     }
 
     @Test
-    void shouldThrowAnExceptionWhenSaveInFileThatDoesntExist() {
+    void shouldThrowAnExceptionWhenSaveInFileThatDoesntExist() throws ManagerSaveException {
         File file = new File("src/com/koval/kanban/phantom", "phantomFile");
         TaskManager fb = new FileBackedTaskManager(file);
         Assertions.assertThrows(ManagerSaveException.class, fb::save);

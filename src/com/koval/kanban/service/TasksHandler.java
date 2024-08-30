@@ -41,7 +41,11 @@ public class TasksHandler extends BaseHttpHandler {
                         String requestTask = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                         Task task = CSVutils.jsonToTask(requestTask);
                         if (fileBackedTaskManager.getTasks().stream().filter(t -> t.getId() == task.getId()).toList().isEmpty()) {
-                            fileBackedTaskManager.addToTasks(task);
+                            try {
+                                fileBackedTaskManager.addToTasks(task);
+                            } catch (ManagerSaveException e) {
+                                FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
+                            }
                             if (fileBackedTaskManager.getTasks().contains(task)) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();
@@ -56,7 +60,11 @@ public class TasksHandler extends BaseHttpHandler {
                         String requestBody = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                         Task task = CSVutils.jsonToTask(requestBody);
                         if (!fileBackedTaskManager.getTasks().stream().filter(t -> t.getId() == task.getId()).toList().isEmpty()) {
-                            fileBackedTaskManager.updateTask(task);
+                            try {
+                                fileBackedTaskManager.updateTask(task);
+                            } catch (ManagerSaveException e) {
+                                FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
+                            }
                             if (fileBackedTaskManager.getTaskById(taskId).equals(task)) {
                                 httpExchange.sendResponseHeaders(201, 0);
                                 httpExchange.close();
