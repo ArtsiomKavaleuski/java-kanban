@@ -13,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
 
     public <T extends Task> void add(T task) {
-        historyMap.computeIfPresent(task.getId(), (a, b) -> b = task);
+        historyMap.computeIfPresent(task.getId(), (a, b) -> task);
         historyMap.putIfAbsent(task.getId(), task);
     }
 

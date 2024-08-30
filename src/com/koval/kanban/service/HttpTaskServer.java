@@ -33,7 +33,7 @@ public class HttpTaskServer {
         httpServer.start();
     }
 
-    public static void main(String[] args) throws IOException, ManagerSaveException {
+    public static void main(String[] args) {
         try {
             File dir = new File("src/com/koval/kanban/resources");
             if (!dir.exists()) {

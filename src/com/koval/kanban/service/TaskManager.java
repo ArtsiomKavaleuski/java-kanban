@@ -4,7 +4,6 @@ import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -54,7 +53,7 @@ public interface TaskManager {
 
     TreeSet<Task> getPrioritizedTasks();
 
-    <T extends Task> boolean checkOverlap(T task);
+    <T extends Task> boolean isTaskOverlap(T task);
 
     <T extends Task> void writeSlots(T task);
 

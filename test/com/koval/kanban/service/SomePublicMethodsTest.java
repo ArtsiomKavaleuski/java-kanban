@@ -33,7 +33,6 @@ public class SomePublicMethodsTest {
         tm.addToSubtasks(subtask1);
         tm.addToSubtasks(subtask2);
         Assertions.assertEquals(TaskStatus.NEW, tm.getEpicById(0).getStatus());
-
     }
 
     @Test
@@ -52,7 +51,6 @@ public class SomePublicMethodsTest {
         tm.addToSubtasks(subtask1);
         tm.addToSubtasks(subtask2);
         Assertions.assertEquals(TaskStatus.DONE, tm.getEpicById(0).getStatus());
-
     }
 
     @Test
@@ -71,7 +69,6 @@ public class SomePublicMethodsTest {
         tm.addToSubtasks(subtask1);
         tm.addToSubtasks(subtask2);
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, tm.getEpicById(0).getStatus());
-
     }
 
     @Test
@@ -92,12 +89,13 @@ public class SomePublicMethodsTest {
         tm.addToSubtasks(subtask1);
         tm.addToSubtasks(subtask2);
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, tm.getEpicById(0).getStatus());
-
     }
 
     @Test
     void checkOfOverlap() throws ManagerSaveException {
         TaskManager tm = new InMemoryTaskManager();
+        Epic epic1 = new Epic("epic1", "epic1 description", 0);
+        tm.addToEpics(epic1);
         SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW,
                 0,
                 LocalDateTime.of(2024, Month.AUGUST, 14, 10, 0),
@@ -111,8 +109,7 @@ public class SomePublicMethodsTest {
                 LocalDateTime.of(2024, Month.AUGUST, 13, 11, 0),
                 Duration.ofMinutes(30));
         tm.addToSubtasks(subTask1);
-        Assertions.assertTrue(tm.checkOverlap(subTask2));
-        //Assertions.assertFalse(tm.isTasksOverlap(subTask2, subTask3));
+        Assertions.assertTrue(tm.isTaskOverlap(subTask2));
     }
 
     @Test

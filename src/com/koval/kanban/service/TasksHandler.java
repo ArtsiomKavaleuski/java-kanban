@@ -44,7 +44,8 @@ public class TasksHandler extends BaseHttpHandler {
                             try {
                                 fileBackedTaskManager.addToTasks(task);
                             } catch (ManagerSaveException e) {
-                                FileBackedTaskManager.getLog().log(Level.SEVERE, "Ошибка: ", e);
+                                //FileBackedTaskManager.getLog().logrb(Level.INFO, ResourceBundle.getBundle("test"), "Test message", task);
+                                FileBackedTaskManager.getLog().log(Level.INFO, e, () -> new String("Задача с временем начала " + task.getStartTime() + " пересекается с уже существующими"));
                             }
                             if (fileBackedTaskManager.getTasks().contains(task)) {
                                 httpExchange.sendResponseHeaders(201, 0);
@@ -53,7 +54,7 @@ public class TasksHandler extends BaseHttpHandler {
                                 sendHasInteractions(httpExchange, "Время переданной задачи пересекается с другими.");
                             }
                         } else {
-                            sendHasInteractions(httpExchange, "ID указанной заадачи уже существует.");
+                            sendHasInteractions(httpExchange, "ID указанной задачи уже существует.");
                         }
                     } else if (path.length == 3 && path[1].equals("tasks")) {
                         int taskId = Integer.parseInt(path[2]);

@@ -5,18 +5,19 @@ import com.koval.kanban.service.TaskStatus;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
 
     private LocalDateTime endTime;
-    private ArrayList<Integer> subTaskIdList = new ArrayList<>();
+    private List<Integer> subTaskIdList = new ArrayList<>();
 
     public Epic(String name, String description, int id) {
         super(name, description, id, TaskStatus.NEW, null, Duration.ZERO);
         taskType = TaskTypes.EPIC;
     }
 
-    public ArrayList<Integer> getSubTaskIds() {
+    public List<Integer> getSubTaskIds() {
         return subTaskIdList;
     }
 
@@ -24,7 +25,7 @@ public class Epic extends Task {
         this.subTaskIdList.add(subTaskId);
     }
 
-    public void removeSubTaskId(int subTaskId) {
+    public void removeSubTaskId(Integer subTaskId) {
         subTaskIdList.remove(subTaskId);
     }
 

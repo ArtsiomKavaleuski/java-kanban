@@ -21,7 +21,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldAddNewTaskToTasks() {
+    void shouldAddNewTaskToTasks() throws ManagerSaveException {
         Task task1 = new Task("task1Name", "task1Description", tm.getId(), TaskStatus.NEW,
                 LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
                 Duration.ofMinutes(30));
@@ -39,7 +39,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldAddNewSubTaskToSubtasks() {
+    void shouldAddNewSubTaskToSubtasks() throws ManagerSaveException {
         Epic epic1 = new Epic("epic1Name", "epic1Description", tm.getId());
         tm.addToEpics(epic1);
         SubTask subTask1 = new SubTask("subTask1Name", "subTask1Description", tm.getId(),
@@ -53,7 +53,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void tasksWithGeneratedAndEnteredIdShouldNotHaveConflict() {
+    void tasksWithGeneratedAndEnteredIdShouldNotHaveConflict() throws ManagerSaveException {
         int enteredSecondId = 1;
         int firstIdExpected = 0;
         Task task1 = new Task("task1Name", "task1Description", tm.getId(), TaskStatus.NEW,
@@ -71,7 +71,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void taskShouldStayTheSameAfterSaving() {
+    void taskShouldStayTheSameAfterSaving() throws ManagerSaveException {
         String name = "task1Name";
         String description = "task1Description";
         int taskId = 1;
@@ -94,7 +94,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void epicShouldNotBeAddedAsHisOwnSubTask() {
+    void epicShouldNotBeAddedAsHisOwnSubTask() throws ManagerSaveException {
         int epicId = 1;
         Epic epic1 = new Epic("epic1Name", "epic1Description", epicId);
         tm.addToEpics(epic1);
@@ -108,7 +108,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void deletedSubTasksShouldNotKeepOldId() {
+    void deletedSubTasksShouldNotKeepOldId() throws ManagerSaveException {
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
         SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW,
                 0,
@@ -123,17 +123,16 @@ class InMemoryTaskManagerTest {
         tm.addToSubtasks(subTask2);
         tm.removeTaskById(subTask2.getId());
         assertNotEquals(subTask2.getId(), 2, "после удаления подзадача продолжаает хранить внутри себя старый ID");
-
     }
 
     @Test
-    void epicShouldNotKeepIdsOfDDeletedSubTasks() {
+    void epicShouldNotKeepIdsOfDDeletedSubTasks() throws ManagerSaveException {
         Epic epic1 = new Epic("epic1", "epic1 description", 0);
-        SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 1, TaskStatus.NEW,
+        SubTask subTask1 = new SubTask("subTask1", "subtask1 description", 3, TaskStatus.NEW,
                 0,
                 LocalDateTime.of(2024, Month.AUGUST, 14, 15, 0),
                 Duration.ofMinutes(30));
-        SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 2, TaskStatus.NEW,
+        SubTask subTask2 = new SubTask("subTask2", "subtask2 description", 4, TaskStatus.NEW,
                 0,
                 LocalDateTime.of(2024, Month.AUGUST, 15, 15, 0),
                 Duration.ofMinutes(30));
@@ -141,8 +140,6 @@ class InMemoryTaskManagerTest {
         tm.addToSubtasks(subTask1);
         tm.addToSubtasks(subTask2);
         tm.removeTaskById(subTask2.getId());
-        assertFalse(tm.getEpicById(0).getSubTaskIds().contains(subTask2.getId()), "в эпике храанится id удаленной подзаадачи");
+        assertFalse(tm.getEpicById(0).getSubTaskIds().contains(subTask2.getId()), "в эпике хранится id удаленной подзадачи");
     }
-
-
 }

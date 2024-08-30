@@ -19,10 +19,11 @@ public class InMemoryTaskManager implements TaskManager {
     TreeSet<Task> sortedTasks = new TreeSet<>(new TaskByDateComparator());
     HistoryManager hm = Managers.getDefaultHistory();
     IntervalsTimeTable intervals = new IntervalsTimeTable();
-    TreeMap<LocalDateTime, Boolean> slots = intervals.getTimeIntervals();
+    TreeMap<LocalDateTime, Boolean> slotsClear = intervals.getTimeIntervals();
+    TreeMap<LocalDateTime, Boolean> slots = slotsClear;
 
     @Override
-    public <T extends Task> boolean checkOverlap(T task) {
+    public <T extends Task> boolean isTaskOverlap(T task) {
         boolean isOverlapped = false;
         if (!task.getClass().equals(Epic.class) && task.getStartTime() != null) {
             LocalDateTime tempDateTime = task.getStartTime();
@@ -70,8 +71,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addToTasks(Task task) throws ManagerSaveException {
-        if (!checkOverlap(task)) {
-            tasks.computeIfAbsent(task.getId(), k -> task);
+        if (!isTaskOverlap(task)) {
+            tasks.putIfAbsent(task.getId(), task);
             writeSlots(task);
             addToSortedTasks(task);
         } else {
@@ -81,15 +82,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addToEpics(Epic epic) {
-        epics.computeIfAbsent(epic.getId(), k -> epic);
+        epics.putIfAbsent(epic.getId(), epic);
         addToSortedTasks(epic);
     }
 
     @Override
     public void addToSubtasks(SubTask subTask) throws ManagerSaveException {
-        if (!checkOverlap(subTask)) {
+        if (!isTaskOverlap(subTask)) {
             if (subTask.getEpicId() != subTask.getId()) {
-                subtasks.computeIfAbsent(subTask.getId(), k -> subTask);
+                subtasks.putIfAbsent(subTask.getId(), subTask);
                 epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
             }
             updateEpicStatusAndTime(subTask);
@@ -103,7 +104,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) throws ManagerSaveException {
-        if (!checkOverlap(task)) {
+        if (!isTaskOverlap(task)) {
             sortedTasks.remove(tasks.get(task.getId()));
             freeUpSlots(task);
             tasks.put(task.getId(), task);
@@ -124,7 +125,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubTask(SubTask subTask) throws ManagerSaveException {
-        if (!checkOverlap(subTask)) {
+        if (!isTaskOverlap(subTask)) {
             addToSortedTasks(subTask);
             sortedTasks.remove(subtasks.get(subTask.getId()));
             sortedTasks.remove(epics.get(subTask.getEpicId()));
@@ -276,6 +277,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         taskIdCounter = 0;
         sortedTasks.clear();
+        slots = slotsClear;
     }
 
     @Override
@@ -300,9 +302,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeSubTasksByEpic(Epic epic) {
         if (epics.get(epic.getId()).getSubTaskIds() != null) {
             CopyOnWriteArrayList<Integer> tempSubTasksList = new CopyOnWriteArrayList<>(epics.get(epic.getId()).getSubTaskIds());
-            tempSubTasksList.stream().forEach(i -> {
-                removeTaskById(i);
-            });
+            tempSubTasksList.stream().forEach(this::removeTaskById);
         }
     }
 

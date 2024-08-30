@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class InMemoryHistoryManagerTest {
 
     @Test
-    public void shouldAddTaskToHistory() {
+    public void shouldAddTaskToHistory() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         HistoryManager hm = tm.getHm();
         Task task1 = new Task("Задача 1", "описание задачи 1", 0,
@@ -26,7 +26,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldHaveNoDuplicates() {
+    public void shouldHaveNoDuplicates() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         HistoryManager hm = tm.getHm();
         Task task1 = new Task("Задача 1", "описание задачи 1", 0,
@@ -41,7 +41,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldContainsOnlyLatestHistory() {
+    public void shouldContainsOnlyLatestHistory() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Task task1 = new Task("Задача 1", "описание задачи 1", 0,
                 TaskStatus.NEW,
@@ -56,7 +56,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldSaveTheOrderOfHistoryWatching() {
+    public void shouldSaveTheOrderOfHistoryWatching() throws ManagerSaveException {
         TaskManager tm = Managers.getDefault();
         Task task1 = new Task("task1", "task1description", 0, TaskStatus.NEW,
                 LocalDateTime.of(2024, Month.AUGUST, 14,15,0),

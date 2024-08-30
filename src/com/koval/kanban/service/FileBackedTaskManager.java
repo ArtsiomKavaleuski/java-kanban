@@ -26,12 +26,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     @Override
-    public Task getTaskById(int id) {
-        hm.add(tasks.get(id));
-        return tasks.get(id);
-    }
-
-    @Override
     public void addToTasks(Task task) throws ManagerSaveException {
         super.addToTasks(task);
         try {
@@ -73,6 +67,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     public void updateSubTask(SubTask subTask) throws ManagerSaveException {
         super.updateSubTask(subTask);
         save();
+    }
+
+    @Override
+    public HistoryManager getHm() {
+        return super.hm;
     }
 
     @Override
@@ -142,10 +141,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 fileWriter.write(taskToString(subTask) + "\n");
             }
         } catch (FileNotFoundException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
+            log.log(Level.SEVERE, "Ошибка записи в файл. Указанный файл не существует.", e);
             throw new ManagerSaveException("Ошибка записи в файл. Указанный файл не существует.", e);
         } catch (IOException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
+            log.log(Level.SEVERE, "Ошибка записи в файл.", e);
             throw new ManagerSaveException("Ошибка записи в файл.", e);
         }
     }
@@ -167,7 +166,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
             }
         } catch (IOException e) {
-            log.log(Level.SEVERE, "Ошибка: ", e);
+            log.log(Level.SEVERE, "Файл пуст или не существует.", e);
             throw new ManagerSaveException("Файл пуст или не существует.", e);
         }
         return fbTaskManager;
