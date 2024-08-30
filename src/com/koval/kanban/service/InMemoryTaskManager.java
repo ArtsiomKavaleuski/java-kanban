@@ -27,9 +27,9 @@ public class InMemoryTaskManager implements TaskManager {
         boolean isOverlapped = false;
         if (!task.getClass().equals(Epic.class) && task.getStartTime() != null) {
             LocalDateTime tempDateTime = task.getStartTime();
-            while(tempDateTime.isBefore(task.getEndTime())) {
+            while (tempDateTime.isBefore(task.getEndTime())) {
                 tempDateTime = tempDateTime.plusMinutes(intervals.MINUTES_INTERVAL);
-                if(slots.get(tempDateTime)) {
+                if (slots.get(tempDateTime)) {
                     isOverlapped = true;
                     break;
                 }
@@ -42,8 +42,8 @@ public class InMemoryTaskManager implements TaskManager {
     public <T extends Task> void writeSlots(T task) {
         if (!task.getClass().equals(Epic.class) && task.getStartTime() != null) {
             LocalDateTime tempDateTime = task.getStartTime();
-            while(true) {
-                if(tempDateTime.isBefore(task.getEndTime())) {
+            while (true) {
+                if (tempDateTime.isBefore(task.getEndTime())) {
                     slots.put(tempDateTime, true);
                     tempDateTime = tempDateTime.plusMinutes(intervals.MINUTES_INTERVAL);
                 } else {
@@ -57,8 +57,8 @@ public class InMemoryTaskManager implements TaskManager {
     public <T extends Task> void freeUpSlots(T task) {
         if (!task.getClass().equals(Epic.class) && task.getStartTime() != null) {
             LocalDateTime tempDateTime = task.getStartTime();
-            while(true) {
-                if(tempDateTime.isBefore(task.getEndTime())) {
+            while (true) {
+                if (tempDateTime.isBefore(task.getEndTime())) {
                     slots.put(tempDateTime, false);
                     tempDateTime = tempDateTime.plusMinutes(intervals.MINUTES_INTERVAL);
                 } else {
