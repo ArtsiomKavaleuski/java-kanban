@@ -2,21 +2,48 @@ package com.koval.kanban.model;
 
 import com.koval.kanban.service.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
-    private ArrayList<Integer> subTaskIdList = new ArrayList<>();
+
+    private LocalDateTime endTime;
+    private List<Integer> subTaskIdList = new ArrayList<>();
 
     public Epic(String name, String description, int id) {
-        super(name, description, id, TaskStatus.NEW);
+        super(name, description, id, TaskStatus.NEW, null, Duration.ZERO);
+        taskType = TaskTypes.EPIC;
     }
 
-    public ArrayList<Integer> getSubTaskIdList() {
+    public List<Integer> getSubTaskIds() {
         return subTaskIdList;
     }
 
     public void addSubTaskId(int subTaskId) {
         this.subTaskIdList.add(subTaskId);
+    }
+
+    public void removeSubTaskId(Integer subTaskId) {
+        subTaskIdList.remove(subTaskId);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 
     @Override
@@ -26,6 +53,7 @@ public class Epic extends Task {
                 "', id='" + super.id +
                 "', status='" + super.status +
                 "', subTaskIdList=" + subTaskIdList +
-                "}";
+                "', startTime='" + startTime +
+                "', duration='" + duration + "'}";
     }
 }

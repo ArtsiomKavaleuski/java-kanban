@@ -4,29 +4,30 @@ import com.koval.kanban.model.Epic;
 import com.koval.kanban.model.SubTask;
 import com.koval.kanban.model.Task;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
-    void addToTasks(Task task);
+    void addToTasks(Task task) throws ManagerSaveException;
 
     void addToEpics(Epic epic);
 
-    void addToSubtasks(SubTask subTask);
+    void addToSubtasks(SubTask subTask) throws ManagerSaveException;
 
-    void updateTask(Task task);
+    void updateTask(Task task) throws ManagerSaveException;
 
-    void updateEpic(Epic epic);
+    void updateEpic(Epic epic) throws ManagerSaveException;
 
-    void updateSubTask(SubTask subTask);
+    void updateSubTask(SubTask subTask) throws ManagerSaveException;
 
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
 
-    ArrayList<Epic> getEpics();
+    List<? extends Task> getEpics();
 
-    ArrayList<SubTask> getSubTasks();
+    List<? extends Task> getSubTasks();
 
-    ArrayList<SubTask> getSubTasksByEpic(int epicId);
+    List<? extends Task> getSubTasksByEpic(int epicId);
 
     Task getTaskById(int id);
 
@@ -47,4 +48,15 @@ public interface TaskManager {
     int getId();
 
     HistoryManager getHm();
+
+    void save() throws ManagerSaveException;
+
+    TreeSet<Task> getPrioritizedTasks();
+
+    <T extends Task> boolean isTaskOverlap(T task);
+
+    <T extends Task> void writeSlots(T task);
+
+    <T extends Task> void freeUpSlots(T task);
+
 }
